@@ -7,3 +7,6 @@ export const routes: Routes = [
 	{path: 'regresar', component: MainPageComponent},
 	{ path: '**', redirectTo: '' }
 ];
+
+
+	
