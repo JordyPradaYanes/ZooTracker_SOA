@@ -1,1 +1,543 @@
-<p>inventario works!</p>
+<app-header></app-header>
+<div class="container mx-auto px-4 py-8">
+  <a
+    routerLink="/regresar"
+    class="cursor-pointer mb-6 flex items-center space-x-2 text-green-600 hover:text-green-700 transition duration-300 group"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-6 w-6"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+        clip-rule="evenodd"
+      />
+    </svg>
+    <span class="opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all duration-300">
+      Regresar
+    </span>
+  </a>
+  <div class="bg-white rounded-lg shadow-lg p-6">
+    <h1 class="text-2xl font-bold text-gray-800 mb-6">Inventario de Animales</h1>
+
+    <!-- Filtros y búsqueda -->
+    <div class="flex flex-col md:flex-row justify-between mb-6 gap-4">
+      <div class="flex flex-col md:flex-row gap-4">
+        <div class="form-group">
+          <select
+            [(ngModel)]="filtroEspecie"
+            (change)="aplicarFiltros()"
+            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">Todas las especies</option>
+            <option *ngFor="let especie of especies" [value]="especie">
+              {{ especie }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <select
+            [(ngModel)]="filtroEstado"
+            (change)="aplicarFiltros()"
+            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">Todos los estados</option>
+            <option *ngFor="let estado of estados" [value]="estado">
+              {{ estado }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="relative">
+          <input
+            type="text"
+            [(ngModel)]="terminoBusqueda"
+            (input)="aplicarFiltros()"
+            placeholder="Buscar por ID o nombre..."
+            class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5 absolute left-3 top-3 text-gray-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estadísticas rápidas -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <div class="bg-blue-50 p-4 rounded-lg shadow border border-blue-100">
+        <h3 class="text-lg font-semibold text-blue-800">Total Animales</h3>
+        <p class="text-3xl font-bold text-blue-600">{{ totalAnimales }}</p>
+      </div>
+      <div class="bg-green-50 p-4 rounded-lg shadow border border-green-100">
+        <h3 class="text-lg font-semibold text-green-800">Animales Sanos</h3>
+        <p class="text-3xl font-bold text-green-600">{{ animalesSanos }}</p>
+      </div>
+      <div class="bg-yellow-50 p-4 rounded-lg shadow border border-yellow-100">
+        <h3 class="text-lg font-semibold text-yellow-800">En Tratamiento</h3>
+        <p class="text-3xl font-bold text-yellow-600">{{ animalesEnTratamiento }}</p>
+      </div>
+      <div class="bg-purple-50 p-4 rounded-lg shadow border border-purple-100">
+        <h3 class="text-lg font-semibold text-purple-800">Nacimientos (Año)</h3>
+        <p class="text-3xl font-bold text-purple-600">{{ nacimientosMes }}</p>
+      </div>
+    </div>
+
+    <!-- Tabla de inventario -->
+    <div class="overflow-x-auto">
+      <table class="min-w-full bg-white border border-gray-200 shadow-md rounded-lg">
+        <thead>
+          <tr class="bg-gray-100">
+            <th class="py-3 px-4 border-b text-left" (click)="ordenarPor('id')">
+              ID
+              <span *ngIf="columnaOrden === 'id'">
+                {{ ordenAscendente ? '↑' : '↓' }}
+              </span>
+            </th>
+            <th class="py-3 px-4 border-b text-left" (click)="ordenarPor('nombre')">
+              Nombre
+              <span *ngIf="columnaOrden === 'nombre'">
+                {{ ordenAscendente ? '↑' : '↓' }}
+              </span>
+            </th>
+            <th class="py-3 px-4 border-b text-left" (click)="ordenarPor('especie')">
+              Especie
+              <span *ngIf="columnaOrden === 'especie'">
+                {{ ordenAscendente ? '↑' : '↓' }}
+              </span>
+            </th>
+            <th class="py-3 px-4 border-b text-left" (click)="ordenarPor('raza')">
+              Raza
+              <span *ngIf="columnaOrden === 'raza'">
+                {{ ordenAscendente ? '↑' : '↓' }}
+              </span>
+            </th>
+            <th class="py-3 px-4 border-b text-left" (click)="ordenarPor('fechaNacimiento')">
+              Nacimiento
+              <span *ngIf="columnaOrden === 'fechaNacimiento'">
+                {{ ordenAscendente ? '↑' : '↓' }}
+              </span>
+            </th>
+            <th class="py-3 px-4 border-b text-left" (click)="ordenarPor('peso')">
+              Peso (kg)
+              <span *ngIf="columnaOrden === 'peso'">
+                {{ ordenAscendente ? '↑' : '↓' }}
+              </span>
+            </th>
+            <th class="py-3 px-4 border-b text-left" (click)="ordenarPor('estado')">
+              Estado
+              <span *ngIf="columnaOrden === 'estado'">
+                {{ ordenAscendente ? '↑' : '↓' }}
+              </span>
+            </th>
+            <th class="py-3 px-4 border-b text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="animalesFiltrados.length === 0">
+            <td colspan="8" class="py-4 px-4 text-center text-gray-500">
+              No se encontraron animales que coincidan con los criterios de búsqueda.
+            </td>
+          </tr>
+          <tr *ngFor="let animal of animalesFiltrados" class="hover:bg-gray-50 border-b">
+            <td class="py-3 px-4">{{ animal.id }}</td>
+            <td class="py-3 px-4 font-medium">{{ animal.nombre }}</td>
+            <td class="py-3 px-4">{{ animal.especie }}</td>
+            <td class="py-3 px-4">{{ animal.raza }}</td>
+            <td class="py-3 px-4">{{ animal.fechaNacimiento | date:'dd/MM/yyyy' }}</td>
+            <td class="py-3 px-4">{{ animal.peso }}</td>
+            <td class="py-3 px-4">
+              <span
+                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                [ngClass]="getEstadoClass(animal.estado)"
+              >
+                {{ animal.estado }}
+              </span>
+            </td>
+            <td class="py-3 px-4 text-center">
+              <button
+                class="text-blue-600 hover:text-blue-800 mr-2"
+                (click)="verDetalles(animal)"
+                title="Ver detalles"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              </button>
+              
+              <button
+                class="text-red-600 hover:text-red-800"
+                (click)="confirmarEliminacion(animal)"
+                title="Eliminar"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Paginación -->
+    <div class="flex justify-between items-center mt-6">
+      <div class="text-sm text-gray-700">
+        Mostrando <span class="font-medium">{{ animalesFiltrados.length }}</span> de
+        <span class="font-medium">{{ animales.length }}</span> animales
+      </div>
+      <div class="flex">
+        <button
+          class="bg-white border border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-l-md"
+          [disabled]="paginaActual === 1"
+          (click)="cambiarPagina(paginaActual - 1)"
+          [ngClass]="{'opacity-50 cursor-not-allowed': paginaActual === 1}"
+        >
+          Anterior
+        </button>
+        <button
+          *ngFor="let pagina of paginas"
+          class="bg-white border border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 text-sm font-medium"
+          [ngClass]="{'bg-blue-50 text-blue-600 border-blue-500': pagina === paginaActual}"
+          (click)="cambiarPagina(pagina)"
+        >
+          {{ pagina }}
+        </button>
+        <button
+          class="bg-white border border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-r-md"
+          [disabled]="paginaActual === totalPaginas"
+          (click)="cambiarPagina(paginaActual + 1)"
+          [ngClass]="{'opacity-50 cursor-not-allowed': paginaActual === totalPaginas}"
+        >
+          Siguiente
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de confirmación de eliminación -->
+  <div *ngIf="mostrarModalEliminacion" class="fixed inset-0 z-10 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen">
+      <div class="fixed inset-0 bg-black opacity-50"></div>
+      <div class="relative bg-white rounded-lg w-full max-w-md mx-4 p-6 shadow-xl">
+        <h3 class="text-lg font-bold text-gray-900 mb-4">Confirmar eliminación</h3>
+        <p class="text-gray-700 mb-6">
+          ¿Estás seguro de que deseas eliminar al animal <span class="font-semibold">{{ animalAEliminar?.nombre }}</span> (ID: {{ animalAEliminar?.id }})?
+          Esta acción no se puede deshacer.
+        </p>
+        <div class="flex justify-end gap-4">
+          <button
+            class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
+            (click)="cancelarEliminacion()"
+          >
+            Cancelar
+          </button>
+          <button
+            class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+            (click)="eliminarAnimal()"
+          >
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de detalles del animal -->
+  <div *ngIf="mostrarModalDetalles" class="fixed inset-0 z-10 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen">
+      <div class="fixed inset-0 bg-black opacity-50"></div>
+      <div class="relative bg-white rounded-lg w-full max-w-4xl mx-4 shadow-xl">
+        <div class="p-6">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xl font-bold text-gray-900">Detalles del Animal</h3>
+            <button 
+              class="text-gray-400 hover:text-gray-600"
+              (click)="cerrarModalDetalles()"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <div class="mb-6">
+                <h4 class="text-lg font-medium text-gray-800 mb-2">Información Básica</h4>
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                  <div class="grid grid-cols-2 gap-4">
+                    <div>
+                      <p class="text-sm text-gray-500">ID:</p>
+                      <p class="font-medium">{{ animalSeleccionado?.id }}</p>
+                    </div>
+                    <div>
+                      <p class="text-sm text-gray-500">Nombre:</p>
+                      <p class="font-medium">{{ animalSeleccionado?.nombre }}</p>
+                    </div>
+                    <div>
+                      <p class="text-sm text-gray-500">Especie:</p>
+                      <p class="font-medium">{{ animalSeleccionado?.especie }}</p>
+                    </div>
+                    <div>
+                      <p class="text-sm text-gray-500">Raza:</p>
+                      <p class="font-medium">{{ animalSeleccionado?.raza }}</p>
+                    </div>
+                    <div>
+                      <p class="text-sm text-gray-500">Fecha de nacimiento:</p>
+                      <p class="font-medium">{{ animalSeleccionado?.fechaNacimiento | date:'dd/MM/yyyy' }}</p>
+                    </div>
+                    <div>
+                      <p class="text-sm text-gray-500">Edad:</p>
+                      <p class="font-medium">{{ calcularEdad(animalSeleccionado?.fechaNacimiento) }}</p>
+                    </div>
+                    <div>
+                      <p class="text-sm text-gray-500">Peso:</p>
+                      <p class="font-medium">{{ animalSeleccionado?.peso }} kg</p>
+                    </div>
+                    <div>
+                      <p class="text-sm text-gray-500">Estado actual:</p>
+                      <p>
+                        <span
+                          class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full"
+                          [ngClass]="getEstadoClass(animalSeleccionado?.estado)"
+                        >
+                          {{ animalSeleccionado?.estado }}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mb-6">
+                <h4 class="text-lg font-medium text-gray-800 mb-2">Características</h4>
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                  <div class="grid grid-cols-2 gap-4">
+                    <div>
+                      <p class="text-sm text-gray-500">Sexo:</p>
+                      <p class="font-medium">{{ animalSeleccionado?.sexo }}</p>
+                    </div>
+                    <div>
+                      <p class="text-sm text-gray-500">Color:</p>
+                      <p class="font-medium">{{ animalSeleccionado?.color }}</p>
+                    </div>
+                    <div>
+                      <p class="text-sm text-gray-500">Altura:</p>
+                      <p class="font-medium">{{ animalSeleccionado?.altura }} cm</p>
+                    </div>
+                    <div>
+                      <p class="text-sm text-gray-500">Longitud:</p>
+                      <p class="font-medium">{{ animalSeleccionado?.longitud }} cm</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div class="mb-6">
+                <h4 class="text-lg font-medium text-gray-800 mb-2">Historial Médico</h4>
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 max-h-60 overflow-y-auto">
+                  <div *ngIf="animalSeleccionado?.historialMedico?.length === 0" class="text-center text-gray-500 py-4">
+                    No hay registros médicos disponibles
+                  </div>
+                  <div *ngFor="let registro of animalSeleccionado?.historialMedico" class="mb-3 pb-3 border-b border-gray-200 last:border-0 last:pb-0 last:mb-0">
+                    <div class="flex justify-between mb-1">
+                      <p class="font-medium">{{ registro.tipo }}</p>
+                      <p class="text-sm text-gray-500">{{ registro.fecha | date:'dd/MM/yyyy' }}</p>
+                    </div>
+                    <p class="text-sm text-gray-700">{{ registro.descripcion }}</p>
+                    <p class="text-sm text-gray-600 mt-1">Veterinario: {{ registro.veterinario }}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mb-6">
+                <h4 class="text-lg font-medium text-gray-800 mb-2">Alimentación y Cuidados</h4>
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                  <div class="mb-3">
+                    <p class="text-sm text-gray-500">Dieta:</p>
+                    <p class="font-medium">{{ animalSeleccionado?.dieta }}</p>
+                  </div>
+                  <div class="mb-3">
+                    <p class="text-sm text-gray-500">Frecuencia de alimentación:</p>
+                    <p class="font-medium">{{ animalSeleccionado?.frecuenciaAlimentacion }}</p>
+                  </div>
+                  <div>
+                    <p class="text-sm text-gray-500">Cuidados especiales:</p>
+                    <p class="font-medium">{{ animalSeleccionado?.cuidadosEspeciales || 'No requiere cuidados especiales' }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <h4 class="text-lg font-medium text-gray-800 mb-2">Observaciones</h4>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+              <p class="text-gray-700">{{ animalSeleccionado?.observaciones || 'Sin observaciones registradas.' }}</p>
+            </div>
+          </div>
+
+          <div class="flex justify-end mt-6 gap-3">
+            <button
+              class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
+              (click)="cerrarModalDetalles()"
+            >
+              Cerrar
+            </button>
+           
+            <button
+              class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+              (click)="registrarEvento(animalSeleccionado!)"
+              [disabled]="!animalSeleccionado"
+            >
+              Registrar Evento
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de registro de evento -->
+  <div *ngIf="mostrarModalEvento" class="fixed inset-0 z-10 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen">
+      <div class="fixed inset-0 bg-black opacity-50"></div>
+      <div class="relative bg-white rounded-lg w-full max-w-md mx-4 shadow-xl">
+        <div class="p-6">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xl font-bold text-gray-900">Registrar Evento</h3>
+            <button 
+              class="text-gray-400 hover:text-gray-600"
+              (click)="cerrarModalEvento()"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <form (ngSubmit)="guardarEvento()">
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="tipoEvento">
+                Tipo de Evento
+              </label>
+              <select
+                id="tipoEvento"
+                name="tipoEvento"
+                [(ngModel)]="nuevoEvento.tipo"
+                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              >
+                <option value="">Seleccione un tipo de evento</option>
+                <option value="Revisión rutinaria">Revisión rutinaria</option>
+                <option value="Vacunación">Vacunación</option>
+                <option value="Tratamiento">Tratamiento</option>
+                <option value="Cirugía">Cirugía</option>
+                <option value="Desparasitación">Desparasitación</option>
+                <option value="Cambio de estado">Cambio de estado</option>
+                <option value="Otro">Otro</option>
+              </select>
+            </div>
+
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="fechaEvento">
+                Fecha
+              </label>
+              <input
+                type="date"
+                id="fechaEvento"
+                name="fechaEvento"
+                [(ngModel)]="nuevoEvento.fecha"
+                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="descripcionEvento">
+                Descripción
+              </label>
+              <textarea
+                id="descripcionEvento"
+                name="descripcionEvento"
+                [(ngModel)]="nuevoEvento.descripcion"
+                rows="3"
+                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              ></textarea>
+            </div>
+
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="veterinarioEvento">
+                Responsable / Veterinario
+              </label>
+              <input
+                type="text"
+                id="veterinarioEvento"
+                name="veterinarioEvento"
+                [(ngModel)]="nuevoEvento.responsable"
+                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+
+            <div *ngIf="nuevoEvento.tipo === 'Cambio de estado'" class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="nuevoEstado">
+                Nuevo Estado
+              </label>
+              <select
+                id="nuevoEstado"
+                name="nuevoEstado"
+                [(ngModel)]="nuevoEvento.nuevoEstado"
+                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              >
+                <option value="">Seleccione un estado</option>
+                <option *ngFor="let estado of estados" [value]="estado">
+                  {{ estado }}
+                </option>
+              </select>
+            </div>
+
+            <div class="flex justify-end gap-3 mt-6">
+              <button
+                type="button"
+                class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
+                (click)="cerrarModalEvento()"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              >
+                Guardar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
