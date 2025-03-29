@@ -58,16 +58,9 @@
       <!-- Menú de navegación -->
       <nav>
         <ul class="flex space-x-8">
-          <!-- Inventario -->
-          <li class="nav-item">
-            <a routerLink="/inventario" routerLinkActive="active" class="text-lg hover:text-red-200">
-              <i class="fas fa-box-open text-xl"></i> <!-- Ícono de inventario -->
-              Inventario
-            </a>
-          </li>
   
           <!-- Registros -->
-          <li class="nav-item">
+          <li class="nav-item" *ngIf="isLoggedIn$ | async">
             <a routerLink="/registros" routerLinkActive="active" class="text-lg hover:text-red-200">
               <i class="fas fa-clipboard-list text-xl"></i> <!-- Ícono de registros -->
               Registros
@@ -75,27 +68,43 @@
           </li>
   
           <!-- Reportes -->
-          <li class="nav-item">
+          <li class="nav-item" *ngIf="isLoggedIn$ | async">
             <a routerLink="/reportes" routerLinkActive="active" class="text-lg hover:text-red-200">
               <i class="fas fa-chart-bar text-xl"></i> <!-- Ícono de reportes -->
               Reportes
             </a>
           </li>
-  
-          <!-- Login -->
-          <li class="nav-item">
-            <a
-              routerLink="/login"
-              routerLinkActive="active"
-              ariaCurrentWhenActive="page"
-              class="text-lg hover:text-red-200"
-            >
-              <i class="fas fa-sign-in-alt text-xl"></i> <!-- Ícono de login -->
-              Login
+
+          <!-- Inventario -->
+          <li class="nav-item" *ngIf="isLoggedIn$ | async">
+            <a routerLink="/inventario" routerLinkActive="active" class="text-lg hover:text-red-200">
+              <i class="fas fa-box-open text-xl"></i> <!-- Ícono de inventario -->
+              Inventario
             </a>
+          </li>
+  
+          <!-- Login y Cerrar Sesion-->
+          <li class="nav-item">
+            <ng-container *ngIf="isLoggedIn$ | async; else loginBtn">
+              <a (click)="logout()" class="text-lg hover:text-red-200">
+                <i class="fas fa-sign-out-alt text-xl"></i> <!-- Ícono de cerrar sesión -->
+                Cerrar Sesión
+              </a>
+
+            </ng-container>
+            <ng-template #loginBtn>
+              <a
+                routerLink="/login"
+                routerLinkActive="active"
+                ariaCurrentWhenActive="page"
+                class="text-lg hover:text-red-200"
+              >
+                <i class="fas fa-sign-in-alt text-xl"></i> <!-- Ícono de login -->
+                Login
+              </a>
+            </ng-template>
           </li>
         </ul>
       </nav>
     </div>
   </header>
-  
