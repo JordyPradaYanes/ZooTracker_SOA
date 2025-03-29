@@ -2,13 +2,14 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { HeaderComponent } from '../header/header.component';
 import { Chart, registerables } from 'chart.js';
 Chart.register(...registerables);
 
 @Component({
   selector: 'app-reportes',
   templateUrl: './reportes.component.html',
-  imports: [FormsModule, ReactiveFormsModule,CommonModule,RouterLink],
+  imports: [FormsModule, ReactiveFormsModule,CommonModule,RouterLink,HeaderComponent],
   styleUrls: ['./reportes.component.css']
 })
 export class ReportesComponent implements OnInit {
@@ -271,7 +272,7 @@ export class ReportesComponent implements OnInit {
           {
             label: 'Saludables',
             data: saludables,
-            backgroundColor: 'rgba(75, 192, 192, 0.7)',
+            backgroundColor: 'rgba(0, 128, 0, 0.7)',
             borderColor: 'rgba(75, 192, 192, 1)',
             borderWidth: 1
           },
