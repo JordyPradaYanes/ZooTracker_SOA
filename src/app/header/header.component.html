@@ -1,0 +1,102 @@
+<style>
+    .nav-item {
+      position: relative;
+      padding: 0.5rem 0;
+    }
+  
+    .nav-item::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      bottom: 0;
+      left: 0;
+      background-color: white;
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.3s ease-in-out;
+    }
+  
+    .nav-item:hover::after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+  
+    .nav-item a {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      transition: color 0.3s ease-in-out;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem; /* Espacio entre el ícono y el texto */
+    }
+  
+    .nav-item a:hover {
+      color: #fecaca; /* Cambia el color al hacer hover */
+    }
+  </style>
+  
+  <!-- Importar FontAwesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+  />
+  
+  <header class="bg-red-600 text-white p-4 shadow-lg">
+    <div class="container mx-auto flex justify-between items-center">
+      <!-- Logo y nombre del proyecto -->
+      <div class="flex items-center">
+        <img
+          src="assets/logoU3.png"
+          alt="Logo UFPSO"
+          class="h-16 mr-3 bg-white rounded-md border-white border-2"
+        />
+        <h1 class="text-2xl font-bold font-poppins">ZooTracker</h1>
+      </div>
+  
+      <!-- Menú de navegación -->
+      <nav>
+        <ul class="flex space-x-8">
+          <!-- Inventario -->
+          <li class="nav-item">
+            <a routerLink="/inventario" routerLinkActive="active" class="text-lg hover:text-red-200">
+              <i class="fas fa-box-open text-xl"></i> <!-- Ícono de inventario -->
+              Inventario
+            </a>
+          </li>
+  
+          <!-- Registros -->
+          <li class="nav-item">
+            <a routerLink="/registros" routerLinkActive="active" class="text-lg hover:text-red-200">
+              <i class="fas fa-clipboard-list text-xl"></i> <!-- Ícono de registros -->
+              Registros
+            </a>
+          </li>
+  
+          <!-- Reportes -->
+          <li class="nav-item">
+            <a routerLink="/reportes" routerLinkActive="active" class="text-lg hover:text-red-200">
+              <i class="fas fa-chart-bar text-xl"></i> <!-- Ícono de reportes -->
+              Reportes
+            </a>
+          </li>
+  
+          <!-- Login -->
+          <li class="nav-item">
+            <a
+              routerLink="/login"
+              routerLinkActive="active"
+              ariaCurrentWhenActive="page"
+              class="text-lg hover:text-red-200"
+            >
+              <i class="fas fa-sign-in-alt text-xl"></i> <!-- Ícono de login -->
+              Login
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  
+  <router-outlet/>

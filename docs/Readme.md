@@ -20,6 +20,7 @@ Una aplicación web diseñada para gestionar el inventario de animales en el pro
 <!-- 12. [Contribuciones](#-contribuciones)
 13. [Licencia](#-licencia)
 14. [Contacto](#-contacto) -->
+  
 
 ---
 
