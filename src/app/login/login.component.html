@@ -39,14 +39,20 @@
 		  <!-- Título del formulario -->
 		  <h2 class="text-2xl font-bold text-center text-gray-800 mt-4">Iniciar Sesión</h2>
 	  
+		  <!-- Mensaje de error -->
+		  <div *ngIf="errorMessage" class="mt-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+			<span class="block sm:inline">{{ errorMessage }}</span>
+		  </div>
+	  
 		  <!-- Formulario -->
-		  <form class="mt-6" >
+		  <form class="mt-6" (ngSubmit)="onSubmit()">
 			<!-- Campo de correo electrónico -->
 			<div class="mb-4">
 			  <label for="inputEmail" class="block text-sm font-medium text-gray-700">Correo electrónico</label>
 			  <input
 				type="email"
 				id="inputEmail"
+				[(ngModel)]="email"
 				name="email"
 				class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
 				placeholder="Ingrese su correo"
@@ -59,7 +65,9 @@
 			  <label for="inputPassword" class="block text-sm font-medium text-gray-700">Contraseña</label>
 			  <div class="relative">
 				<input
+				  [type]="showPassword ? 'text' : 'password'"
 				  id="inputPassword"
+				  [(ngModel)]="password"
 				  name="password"
 				  class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
 				  placeholder="Ingrese su contraseña"
@@ -67,7 +75,7 @@
 				/>
 				<button
 				  type="button"
-				  
+				  (click)="togglePasswordVisibility()"
 				  class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
 				>
 				  <!-- Ícono de ojo (mostrar/ocultar) -->
@@ -88,6 +96,7 @@
 			  <input
 				type="checkbox"
 				id="rememberMe"
+				[(ngModel)]="rememberMe"
 				name="rememberMe"
 				class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
 			  />
@@ -98,8 +107,16 @@
 			<button
 			  type="submit"
 			  class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-300"
+			  [disabled]="isLoading"
 			>
-			  Iniciar sesión
+			  <span *ngIf="!isLoading">Iniciar sesión</span>
+			  <span *ngIf="isLoading" class="flex items-center justify-center">
+				<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+				  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+				  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+				</svg>
+				Procesando...
+			  </span>
 			</button>
   
 			<!-- Separador -->
@@ -112,7 +129,9 @@
 			<!-- Botón de Google -->
 			<button
 			  type="button"
+			  (click)="loginWithGoogle()"
 			  class="w-full flex items-center justify-center bg-white border border-gray-300 rounded-lg py-2 px-4 text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300"
+			  [disabled]="isLoading"
 			>
 			  <svg class="h-5 w-5 mr-2" viewBox="0 0 24 24">
 				<path
@@ -133,51 +152,22 @@
 				/>
 				<path d="M1 1h22v22H1z" fill="none" />
 			  </svg>
-			  Continuar con Google
+			  <span *ngIf="!isLoading">Continuar con Google</span>
+			  <span *ngIf="isLoading">Procesando...</span>
 			</button>
 		  </form>
 	  
 		  <!-- Enlace de "Olvidó su contraseña" -->
 		  <div class="mt-4 text-center">
-			<a href="#" class="text-sm text-blue-600 hover:text-blue-500">¿Olvidó su contraseña?</a>
+			<a (click)="forgotPassword()" class="text-sm text-blue-600 hover:text-blue-500 cursor-pointer">¿Olvidó su contraseña?</a>
+		  </div>
+		  
+		  <!-- Enlace de registro -->
+		  <div class="mt-2 text-center">
+			<span class="text-sm text-gray-600">¿No tienes una cuenta? </span>
+			<a routerLink="/registro" class="text-sm text-blue-600 hover:text-blue-500">Regístrate</a>
 		  </div>
 		</div>
 	  </div>
 	</div>
   </div>
-  
-  <style>
-	/* Estilos para la barra de desplazamiento personalizada */
-	.custom-scrollbar::-webkit-scrollbar {
-	  width: 8px;
-	}
-	
-	.custom-scrollbar::-webkit-scrollbar-track {
-	  background: rgba(255, 255, 255, 0.1);
-	  border-radius: 10px;
-	}
-	
-	.custom-scrollbar::-webkit-scrollbar-thumb {
-	  background: rgba(255, 255, 255, 0.3);
-	  border-radius: 10px;
-	}
-	
-	.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-	  background: rgba(255, 255, 255, 0.5);
-	}
-	
-	/* Estilos para Firefox */
-	.custom-scrollbar {
-	  scrollbar-width: thin;
-	  scrollbar-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.1);
-	}
-  
-	/* Estilos para asegurar que haya espacio suficiente para scroll */
-	body, html {
-	  min-height: 100%;
-	  height: auto;
-	  margin: 0;
-	  padding: 0;
-	}
-  </style>
-  
