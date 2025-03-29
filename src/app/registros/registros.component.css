@@ -1,0 +1,77 @@
+/* Animaciones */
+.ng-invalid.ng-touched:not(form) {
+    border-color: #ef4444;
+  }
+  
+  /* Estilos para la tabla con hover */
+  table tbody tr:hover {
+    background-color: rgba(5, 150, 105, 0.05);
+  }
+  
+  /* Estilos para los botones */
+  button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+  
+  /* Estilos para mejorar la visualización en móviles */
+  @media (max-width: 768px) {
+    .table-container {
+      overflow-x: auto;
+    }
+    
+    table {
+      min-width: 800px;
+    }
+  }
+  
+  /* Transiciones */
+  .btn, button {
+    transition: all 0.2s ease-in-out;
+  }
+  
+  /* Estilos para los badges de estado */
+  .badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1;
+    border-radius: 9999px;
+  }
+  
+  /* Ajuste para que los iconos SVG se vean centrados */
+  svg {
+    vertical-align: middle;
+  }
+  
+  /* Mejora visual para los formularios */
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #059669;
+    box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.2);
+  }
+  
+  /* Ajustes para la interfaz en dispositivos pequeños */
+  @media (max-width: 640px) {
+    .container {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+    
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  /* Estilo para las alertas de validación */
+  .validation-error {
+    color: #ef4444;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+  }
+  
+  /* Estilo para destacar filas alternadas en la tabla */
+  tbody tr:nth-child(odd) {
+    background-color: rgba(249, 250, 251, 0.8);
+  }
