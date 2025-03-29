@@ -1,1 +1,228 @@
-<p>registros works!</p>
+<app-header></app-header>
+<div class="container mx-auto p-4">
+  <!-- Botón de regresar -->
+  <a routerLink="/regresar" class="cursor-pointer mb-6 flex items-center space-x-2 text-green-600 hover:text-green-700 transition duration-300 group">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+    </svg>
+    <span class="opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all duration-300">Regresar</span>
+  </a>
+
+  <h1 class="text-2xl font-bold text-emerald-700 mb-6">Registro de Animales</h1>
+
+  <!-- Formulario de registro -->
+  <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+    <h2 class="text-xl font-semibold mb-4">{{ modoEdicion ? 'Editar Animal' : 'Nuevo Animal' }}</h2>
+    <form [formGroup]="registroForm" (ngSubmit)="onSubmit()" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <!-- Código -->
+      <div class="mb-4">
+        <label for="codigo" class="block text-sm font-medium text-gray-700 mb-1">Código *</label>
+        <input type="text" id="codigo" formControlName="codigo" placeholder="Ej: BOV001" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500" [ngClass]="{'border-red-500': registroForm.get('codigo')?.invalid && registroForm.get('codigo')?.touched}">
+        <div *ngIf="registroForm.get('codigo')?.invalid && registroForm.get('codigo')?.touched" class="text-red-500 text-xs mt-1">Código requerido (6-10 caracteres, solo letras mayúsculas y números)</div>
+      </div>
+
+      <!-- Especie -->
+      <div class="mb-4">
+        <label for="especie" class="block text-sm font-medium text-gray-700 mb-1">Especie *</label>
+        <select id="especie" formControlName="especie" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500" [ngClass]="{'border-red-500': registroForm.get('especie')?.invalid && registroForm.get('especie')?.touched}">
+          <option value="" disabled selected>Seleccionar</option>
+          <option *ngFor="let especie of especies" [value]="especie">{{ especie }}</option>
+        </select>
+        <div *ngIf="registroForm.get('especie')?.invalid && registroForm.get('especie')?.touched" class="text-red-500 text-xs mt-1">Especie requerida</div>
+      </div>
+
+      <!-- Raza -->
+      <div class="mb-4">
+        <label for="raza" class="block text-sm font-medium text-gray-700 mb-1">Raza *</label>
+        <input type="text" id="raza" formControlName="raza" placeholder="Ej: Holstein" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500" [ngClass]="{'border-red-500': registroForm.get('raza')?.invalid && registroForm.get('raza')?.touched}">
+        <div *ngIf="registroForm.get('raza')?.invalid && registroForm.get('raza')?.touched" class="text-red-500 text-xs mt-1">Raza requerida</div>
+      </div>
+
+      <!-- Fecha de Nacimiento -->
+      <div class="mb-4">
+        <label for="fechaNacimiento" class="block text-sm font-medium text-gray-700 mb-1">Fecha de Nacimiento *</label>
+        <input type="date" id="fechaNacimiento" formControlName="fechaNacimiento" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500" [ngClass]="{'border-red-500': registroForm.get('fechaNacimiento')?.invalid && registroForm.get('fechaNacimiento')?.touched}">
+        <div *ngIf="registroForm.get('fechaNacimiento')?.invalid && registroForm.get('fechaNacimiento')?.touched" class="text-red-500 text-xs mt-1">Fecha requerida</div>
+      </div>
+
+      <!-- Peso -->
+      <div class="mb-4">
+        <label for="peso" class="block text-sm font-medium text-gray-700 mb-1">Peso (kg) *</label>
+        <input type="number" id="peso" formControlName="peso" placeholder="Ej: 450" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500" [ngClass]="{'border-red-500': registroForm.get('peso')?.invalid && registroForm.get('peso')?.touched}">
+        <div *ngIf="registroForm.get('peso')?.invalid && registroForm.get('peso')?.touched" class="text-red-500 text-xs mt-1">Peso válido requerido</div>
+      </div>
+
+      <!-- Género -->
+      <div class="mb-4">
+        <label for="genero" class="block text-sm font-medium text-gray-700 mb-1">Género *</label>
+        <select id="genero" formControlName="genero" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500" [ngClass]="{'border-red-500': registroForm.get('genero')?.invalid && registroForm.get('genero')?.touched}">
+          <option value="" disabled selected>Seleccionar</option>
+          <option *ngFor="let genero of generos" [value]="genero">{{ genero }}</option>
+        </select>
+        <div *ngIf="registroForm.get('genero')?.invalid && registroForm.get('genero')?.touched" class="text-red-500 text-xs mt-1">Género requerido</div>
+      </div>
+
+      <!-- Estado -->
+      <div class="mb-4">
+        <label for="estado" class="block text-sm font-medium text-gray-700 mb-1">Estado *</label>
+        <select id="estado" formControlName="estado" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500">
+          <option *ngFor="let estado of estados" [value]="estado">{{ estado }}</option>
+        </select>
+      </div>
+
+      <!-- Ubicación -->
+      <div class="mb-4">
+        <label for="ubicacion" class="block text-sm font-medium text-gray-700 mb-1">Ubicación *</label>
+        <input type="text" id="ubicacion" formControlName="ubicacion" placeholder="Ej: Potrero A" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500" [ngClass]="{'border-red-500': registroForm.get('ubicacion')?.invalid && registroForm.get('ubicacion')?.touched}">
+        <div *ngIf="registroForm.get('ubicacion')?.invalid && registroForm.get('ubicacion')?.touched" class="text-red-500 text-xs mt-1">Ubicación requerida</div>
+      </div>
+
+      <!-- Observaciones -->
+      <div class="mb-4 col-span-1 md:col-span-2 lg:col-span-3">
+        <label for="observaciones" class="block text-sm font-medium text-gray-700 mb-1">Observaciones</label>
+        <textarea id="observaciones" formControlName="observaciones" placeholder="Detalles adicionales del animal..." rows="3" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+      </div>
+
+      <!-- Botones -->
+      <div class="col-span-1 md:col-span-2 lg:col-span-3 flex gap-3 justify-end mt-4">
+        <button type="button" *ngIf="modoEdicion" (click)="cancelarEdicion()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition">Cancelar</button>
+        <button type="submit" [disabled]="registroForm.invalid" class="px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition disabled:opacity-50 disabled:cursor-not-allowed">{{ modoEdicion ? 'Actualizar' : 'Registrar' }}</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Lista de animales -->
+  <div class="bg-white rounded-lg shadow-md p-6">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+      <h2 class="text-xl font-semibold mb-3 sm:mb-0">Lista de Animales</h2>
+      <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+        <button (click)="exportarCSV()" class="px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          Exportar CSV
+        </button>
+      </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label for="filtroTexto" class="block text-sm font-medium text-gray-700 mb-1">Buscar</label>
+        <input type="text" id="filtroTexto" [(ngModel)]="filtroTexto" placeholder="Código, raza, ubicación..." class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500">
+      </div>
+      <div>
+        <label for="filtroEspecie" class="block text-sm font-medium text-gray-700 mb-1">Filtrar por especie</label>
+        <select id="filtroEspecie" [(ngModel)]="filtroEspecie" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500">
+          <option value="">Todas las especies</option>
+          <option *ngFor="let especie of especies" [value]="especie">{{ especie }}</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Tabla de animales -->
+    <div class="overflow-x-auto">
+      <table class="min-w-full bg-white">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Código</th>
+            <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Especie</th>
+            <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Raza</th>
+            <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Edad</th>
+            <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Peso</th>
+            <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Estado</th>
+            <th class="py-3 px-4 text-center text-sm font-semibold text-gray-700">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="animalesFiltrados.length === 0">
+            <td colspan="7" class="py-4 px-4 text-center text-gray-500">No se encontraron registros</td>
+          </tr>
+          <tr *ngFor="let animal of animalesFiltrados" class="border-b hover:bg-gray-50">
+            <td class="py-3 px-4">{{ animal.id }}</td>
+            <td class="py-3 px-4">{{ animal.especie }}</td>
+            <td class="py-3 px-4">{{ animal.raza }}</td>
+            <td class="py-3 px-4">{{ calcularEdad(animal.fechaNacimiento) }} años</td>
+            <td class="py-3 px-4">{{ animal.peso }} kg</td>
+            <td class="py-3 px-4">
+              <span class="px-2 py-1 text-xs rounded-full" [ngClass]="{
+                'bg-green-100 text-green-800': animal.estado === 'Activo',
+                'bg-yellow-100 text-yellow-800': animal.estado === 'En tratamiento',
+                'bg-blue-100 text-blue-800': animal.estado === 'Vendido',
+                'bg-red-100 text-red-800': animal.estado === 'Fallecido'
+              }">
+                {{ animal.estado }}
+              </span>
+            </td>
+            <td class="py-3 px-4 text-center">
+              <div class="flex justify-center gap-2">
+                <button (click)="editarAnimal(animal)" class="p-1 text-blue-600 hover:text-blue-800" title="Editar">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                  </svg>
+                </button>
+                <button (click)="eliminarAnimal(animal.id)" class="p-1 text-red-600 hover:text-red-800" title="Eliminar">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+                <button (click)="mostrarDetalles(animal)" class="p-1 text-green-600 hover:text-green-800" title="Ver detalles">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Paginación -->
+    <div class="mt-6 flex justify-center">
+      <nav aria-label="Paginación">
+        <ul class="flex gap-1">
+          <li>
+            <button (click)="cambiarPagina(paginaActual - 1)" [disabled]="paginaActual === 1" class="px-3 py-1 rounded-md border hover:bg-gray-100 disabled:opacity-50" aria-label="Anterior">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+          </li>
+          <li *ngFor="let pagina of paginas">
+            <button (click)="cambiarPagina(pagina)" class="px-3 py-1 rounded-md border" [ngClass]="pagina === paginaActual ? 'bg-emerald-600 text-white' : 'hover:bg-gray-100'">
+              {{ pagina }}
+            </button>
+          </li>
+          <li>
+            <button (click)="cambiarPagina(paginaActual + 1)" [disabled]="paginaActual === totalPaginas" class="px-3 py-1 rounded-md border hover:bg-gray-100 disabled:opacity-50" aria-label="Siguiente">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Modal de detalles -->
+  <div *ngIf="animalSeleccionado" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-2xl">
+      <h2 class="text-xl font-bold mb-4">Detalles del Animal</h2>
+      <p><strong>ID:</strong> {{ animalSeleccionado.id }}</p>
+      <p><strong>Especie:</strong> {{ animalSeleccionado.especie }}</p>
+      <p><strong>Raza:</strong> {{ animalSeleccionado.raza }}</p>
+      <p><strong>Fecha de Nacimiento:</strong> {{ animalSeleccionado.fechaNacimiento | date }}</p>
+      <p><strong>Edad:</strong> {{ calcularEdad(animalSeleccionado.fechaNacimiento) }} años</p>
+      <p><strong>Peso:</strong> {{ animalSeleccionado.peso }} kg</p>
+      <p><strong>Género:</strong> {{ animalSeleccionado.sexo }}</p>
+      <p><strong>Estado:</strong> {{ animalSeleccionado.estado }}</p>
+      <p><strong>Color:</strong> {{ animalSeleccionado.color }}</p>
+      <p><strong>Observaciones:</strong> {{ animalSeleccionado.observaciones || 'Sin observaciones' }}</p>
+      <button (click)="animalSeleccionado = null" class="mt-4 px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400">Cerrar</button>
+    </div>
+  </div>
+</div>
+<router-outlet></router-outlet>
