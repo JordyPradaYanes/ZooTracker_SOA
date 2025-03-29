@@ -143,7 +143,7 @@ export class ReportesComponent implements OnInit {
     const datos = this.datosInventario.map(item => item.cantidad);
     
     // Crear gráfico
-    this.charts['chartInventario'] = new Chart(ctx, {
+    new Chart(ctx, {
       type: 'doughnut',
       data: {
         labels: labels,
