@@ -2,12 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterOutlet, RouterLink, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { LoginGoogleComponent } from '../login-google/login-google.component';
 import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [RouterLink, FormsModule, CommonModule],
+  imports: [RouterLink, FormsModule, LoginGoogleComponent, CommonModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
@@ -79,24 +80,6 @@ export class LoginComponent implements OnInit {
           default:
             this.errorMessage = 'Error al iniciar sesión. Por favor, inténtelo de nuevo.';
         }
-      })
-      .finally(() => {
-        this.isLoading = false;
-      });
-  }
-
-  loginWithGoogle(): void {
-    this.isLoading = true;
-    this.errorMessage = '';
-    
-    this.authService.loginWithGoogle()
-      .then(() => {
-        console.log('Inicio de sesión con Google exitoso');
-        this.router.navigate(['/registros']);
-      })
-      .catch(error => {
-        console.error('Error al iniciar sesión con Google:', error);
-        this.errorMessage = 'Error al iniciar sesión con Google. Por favor, inténtelo de nuevo.';
       })
       .finally(() => {
         this.isLoading = false;
