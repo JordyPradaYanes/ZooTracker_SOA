@@ -5,6 +5,7 @@ import {
   createUserWithEmailAndPassword, 
   signOut,
   GoogleAuthProvider,
+  FacebookAuthProvider,
   signInWithPopup,
   sendPasswordResetEmail,
   UserCredential,
@@ -55,6 +56,19 @@ export class AuthService {
       return result;
     } catch (error) {
       console.error('Error en loginWithGoogle:', error);
+      throw error;
+    }
+  }
+  
+  // Iniciar sesión con Facebook
+  async loginWithFacebook(): Promise<UserCredential> {
+    try {
+      const provider = new FacebookAuthProvider();
+      const result = await signInWithPopup(this.auth, provider);
+      this.userLoggedIn.next(true);
+      return result;
+    } catch (error) {
+      console.error('Error en loginWithFacebook:', error);
       throw error;
     }
   }
