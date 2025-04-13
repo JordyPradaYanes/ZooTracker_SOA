@@ -4,12 +4,13 @@ import { RouterOutlet, RouterLink, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { LoginGoogleComponent } from '../login-google/login-google.component';
 import { LoginFacebookComponent } from '../login-facebook/login-facebook.component';
+import { RegistroComponent } from '../registro/registro.component';
 import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [RouterLink, FormsModule, LoginGoogleComponent, CommonModule, LoginFacebookComponent],
+  imports: [RouterLink, FormsModule, LoginGoogleComponent, CommonModule, LoginFacebookComponent, RegistroComponent],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
@@ -63,11 +64,11 @@ export class LoginComponent implements OnInit {
         console.log('Login exitoso:', result);
         
         // Guardar en localStorage si rememberMe está activado
-        if (this.rememberMe) {
-          localStorage.setItem('rememberedEmail', this.email);
-        } else {
-          localStorage.removeItem('rememberedEmail');
-        }
+        // if (this.rememberMe) {
+        //   localStorage.setItem('rememberedEmail', this.email);
+        // } else {
+        //   localStorage.removeItem('rememberedEmail');
+        // }
         
         this.router.navigate(['/registros']);
       })
