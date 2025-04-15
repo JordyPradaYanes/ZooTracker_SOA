@@ -110,9 +110,9 @@ ZooTracker aborda estos desafíos proporcionando:
 
 El proyecto se gestiona utilizando metodologías ágiles, con las siguientes herramientas:
 - **GitHub**: Para el control de versiones y colaboración en el código.
-  - 🔗 [Repositorio de GitHub](https://github.com/JordyPradaYanes/ZooTracker)
+  - 🔗 [Repositorio de GitHub](https://github.com/JordyPradaYanes/ZooTracker_SOA)
 - **Jira**: Para el seguimiento de tareas, sprints y gestión del progreso.
-  - 🔗 [Tablero de Jira](https://ufpso-team-ysvhrzaw.atlassian.net/jira/software/projects/SCRUM/list)
+  - 🔗 [Tablero de Jira](https://ufpso-team-ysvhrzaw.atlassian.net/jira/software/projects/ZT/boards/2)
 
 ---
 
@@ -128,8 +128,8 @@ El proyecto se gestiona utilizando metodologías ágiles, con las siguientes her
 ## 🚀 **Instalación y Uso**
 
 ### **Requisitos Previos**
-- Node.js (v18.x o superior).
-- Angular CLI (v15.x o superior).
+- Node.js (v18.20.7 o superior).
+- Angular CLI (v19.2.6 o superior).
 
 ### **Instalación**
 1. Clona el repositorio:
