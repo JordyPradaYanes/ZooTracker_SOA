@@ -2,12 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterOutlet, RouterLink, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { LoginGoogleComponent } from '../login-google/login-google.component';
+import { LoginFacebookComponent } from '../login-facebook/login-facebook.component';
+import { RegistroComponent } from '../registro/registro.component';
 import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [RouterLink, FormsModule, CommonModule],
+  imports: [RouterLink, FormsModule, LoginGoogleComponent, CommonModule, LoginFacebookComponent, RegistroComponent],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
@@ -26,11 +29,19 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     // Verificar si el usuario ya está autenticado
-    this.authService.isLoggedIn.subscribe(isLoggedIn => {
-      // if (isLoggedIn) {
-      //   this.router.navigate(['/registros']);
-      // }
-    });
+    // this.authService.isLoggedIn.subscribe(isLoggedIn => {
+    //   console.log('Estado de login en componente:', isLoggedIn);
+    //   if (isLoggedIn) {
+    //     this.router.navigate(['/registros']);
+    //   }
+    // });
+    
+    // Recuperar email guardado si existe
+    // const savedEmail = localStorage.getItem('rememberedEmail');
+    // if (savedEmail) {
+    //   this.email = savedEmail;
+    //   this.rememberMe = true;
+    // } 
   }
 
   togglePasswordVisibility(): void {
@@ -46,21 +57,23 @@ export class LoginComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = '';
     
+    console.log('Intentando login con:', this.email);
+    
     this.authService.loginWithEmailAndPassword(this.email, this.password)
-      .then(() => {
-        console.log('Inicio de sesión exitoso');
+      .then((result) => {
+        console.log('Login exitoso:', result);
         
         // Guardar en localStorage si rememberMe está activado
-        if (this.rememberMe) {
-          localStorage.setItem('rememberedEmail', this.email);
-        } else {
-          localStorage.removeItem('rememberedEmail');
-        }
+        // if (this.rememberMe) {
+        //   localStorage.setItem('rememberedEmail', this.email);
+        // } else {
+        //   localStorage.removeItem('rememberedEmail');
+        // }
         
         this.router.navigate(['/registros']);
       })
       .catch(error => {
-        console.error('Error al iniciar sesión:', error);
+        console.error('Error en login:', error);
         
         // Manejar diferentes códigos de error de Firebase
         switch (error.code) {
@@ -76,27 +89,12 @@ export class LoginComponent implements OnInit {
           case 'auth/wrong-password':
             this.errorMessage = 'Contraseña incorrecta';
             break;
+          case 'auth/invalid-credential':
+            this.errorMessage = 'Credenciales inválidas. Verifique su correo y contraseña.';
+            break;
           default:
-            this.errorMessage = 'Error al iniciar sesión. Por favor, inténtelo de nuevo.';
+            this.errorMessage = `Error al iniciar sesión: ${error.message}`;
         }
-      })
-      .finally(() => {
-        this.isLoading = false;
-      });
-  }
-
-  loginWithGoogle(): void {
-    this.isLoading = true;
-    this.errorMessage = '';
-    
-    this.authService.loginWithGoogle()
-      .then(() => {
-        console.log('Inicio de sesión con Google exitoso');
-        this.router.navigate(['/registros']);
-      })
-      .catch(error => {
-        console.error('Error al iniciar sesión con Google:', error);
-        this.errorMessage = 'Error al iniciar sesión con Google. Por favor, inténtelo de nuevo.';
       })
       .finally(() => {
         this.isLoading = false;
