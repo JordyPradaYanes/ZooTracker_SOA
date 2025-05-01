@@ -6,6 +6,7 @@ import {
   signOut,
   GoogleAuthProvider,
   FacebookAuthProvider,
+  GithubAuthProvider, // Añade este import
   signInWithPopup,
   sendPasswordResetEmail,
   UserCredential,
@@ -27,7 +28,21 @@ export class AuthService {
       this.userLoggedIn.next(!!user);
     });
   }
-  
+    // Añade este nuevo método para GitHub
+    async loginWithGitHub(): Promise<UserCredential> {
+      try {
+        const provider = new GithubAuthProvider();
+        // Opcional: puedes añadir scopes adicionales
+        provider.addScope('repo'); // Ejemplo para solicitar acceso a repositorios
+        
+        const result = await signInWithPopup(this.auth, provider);
+        this.userLoggedIn.next(true);
+        return result;
+      } catch (error) {
+        console.error('Error en loginWithGitHub:', error);
+        throw error;
+      }
+    }
   // Obtener el estado de autenticación como Observable
   get isLoggedIn(): Observable<boolean> {
     return this.userLoggedIn.asObservable();
