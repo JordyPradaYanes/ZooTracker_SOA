@@ -2,14 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterOutlet, RouterLink, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { LoginGoogleComponent } from '../login-google/login-google.component';
-import { LoginFacebookComponent } from '../login-facebook/login-facebook.component';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-registro',
   standalone: true,
-  imports: [RouterLink, FormsModule, LoginGoogleComponent, CommonModule, LoginFacebookComponent],
+  imports: [RouterLink, FormsModule, CommonModule],
   templateUrl: './registro.component.html',
   styleUrls: ['./registro.component.css']
 })
@@ -29,13 +27,13 @@ export class RegistroComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Verificar si el usuario ya está autenticado
-    // this.authService.isLoggedIn.subscribe(isLoggedIn => {
-    //   if (isLoggedIn) {
-    //     this.router.navigate(['/registros']);
-    //   }
-    // });
-  }
+  // Verificar si el usuario ya está autenticado
+  this.authService.isLoggedIn.subscribe(isLoggedIn => {
+    if (isLoggedIn) {
+      this.router.navigate(['/login']);
+    }
+  });
+}
 
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;

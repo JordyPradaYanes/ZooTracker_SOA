@@ -1,11 +1,11 @@
 import { Routes } from '@angular/router';
 
-import {LoginComponent} from './login/login.component';
+import {LoginComponent} from './InicioSesion/login/login.component';
 import { MainPageComponent } from './main-page/main-page.component';
 import { InventarioComponent } from './inventario/inventario.component';
 import { RegistrosComponent } from './registros/registros.component';
 import { ReportesComponent } from './reportes/reportes.component';
-import { RegistroComponent } from './registro/registro.component';
+import { RegistroComponent } from './InicioSesion/registro/registro.component';
 
 export const routes: Routes = [
 	{ path: '', component: MainPageComponent},
