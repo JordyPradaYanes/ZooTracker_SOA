@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { HeaderComponent } from '../header/header.component';
+import { HeaderComponent } from '../../ComponentesEstructurales/header/header.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
