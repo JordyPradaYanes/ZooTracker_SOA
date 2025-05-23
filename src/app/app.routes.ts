@@ -6,6 +6,7 @@ import { InventarioComponent } from './LayoutPriv/inventario/inventario.componen
 import { RegistrosComponent } from './LayoutPriv/registros/registros.component';
 import { ReportesComponent } from './LayoutPriv/reportes/reportes.component';
 import { RegistroComponent } from './auth/registro/registro.component';
+import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password.component';
 
 export const routes: Routes = [
 	{ path: '', component: MainPageComponent},
@@ -15,5 +16,6 @@ export const routes: Routes = [
 	{ path: 'registros', component: RegistrosComponent},
 	{ path: 'reportes', component: ReportesComponent},
 	{ path: 'registro', component: RegistroComponent},
+	{ path: 'forgot-password', component: ForgotPasswordComponent},	
 	{ path: '**', redirectTo: '' }
 ];

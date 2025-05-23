@@ -1,9 +1,11 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login-github',
   templateUrl: './login-github.component.html',
+  imports: [CommonModule],
   styleUrls: ['./login-github.component.css']
 })
 export class LoginGithubComponent {
