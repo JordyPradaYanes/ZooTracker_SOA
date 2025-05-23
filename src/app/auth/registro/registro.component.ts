@@ -102,4 +102,14 @@ export class RegistroComponent implements OnInit {
         this.isLoading = false;
       });
   }
+  clearForm(): void {
+    this.name = '';
+    this.email = '';
+    this.password = '';
+    this.confirmPassword = '';
+    this.showPassword = false;
+    this.errorMessage = '';
+    this.isLoading = false;
+    this.acceptTerms = false;
+  }
 }
