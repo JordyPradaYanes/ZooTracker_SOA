@@ -20,4 +20,3 @@ describe('UserCrudComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-});
