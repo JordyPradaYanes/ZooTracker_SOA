@@ -7,6 +7,7 @@ import { RegistrosComponent } from './LayoutPriv/registros/registros.component';
 import { ReportesComponent } from './LayoutPriv/reportes/reportes.component';
 import { RegistroComponent } from './auth/registro/registro.component';
 import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password.component';
+import { UserCrudComponent } from './user-crud/user-crud.component';
 
 export const routes: Routes = [
 	{ path: '', component: MainPageComponent},
@@ -17,5 +18,6 @@ export const routes: Routes = [
 	{ path: 'reportes', component: ReportesComponent},
 	{ path: 'registro', component: RegistroComponent},
 	{ path: 'forgot-password', component: ForgotPasswordComponent},	
+	{ path: 'userCrud', component: UserCrudComponent},
 	{ path: '**', redirectTo: '' }
 ];
