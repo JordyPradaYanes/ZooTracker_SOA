@@ -6,12 +6,12 @@ import { LoginGoogleComponent } from '../login-google/login-google.component';
 import { LoginFacebookComponent } from '../login-facebook/login-facebook.component';
 import { RegistroComponent } from '../registro/registro.component';
 import { LoginGithubComponent } from '../login-github/login-github.component'; // Nuevo import
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [RouterLink, FormsModule, LoginGoogleComponent, CommonModule, LoginFacebookComponent, RegistroComponent,LoginGithubComponent],
+  imports: [RouterLink, FormsModule, LoginGoogleComponent, CommonModule, LoginFacebookComponent,LoginGithubComponent],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })

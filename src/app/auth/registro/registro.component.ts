@@ -4,12 +4,12 @@ import { RouterOutlet, RouterLink, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { LoginGoogleComponent } from '../login-google/login-google.component';
 import { LoginFacebookComponent } from '../login-facebook/login-facebook.component';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-registro',
   standalone: true,
-  imports: [RouterLink, FormsModule, LoginGoogleComponent, CommonModule, LoginFacebookComponent],
+  imports: [RouterLink, FormsModule, CommonModule],
   templateUrl: './registro.component.html',
   styleUrls: ['./registro.component.css']
 })
@@ -101,5 +101,15 @@ export class RegistroComponent implements OnInit {
       .finally(() => {
         this.isLoading = false;
       });
+  }
+  clearForm(): void {
+    this.name = '';
+    this.email = '';
+    this.password = '';
+    this.confirmPassword = '';
+    this.showPassword = false;
+    this.errorMessage = '';
+    this.isLoading = false;
+    this.acceptTerms = false;
   }
 }
