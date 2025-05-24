@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 
-import { HeaderComponent } from '../header/header.component';
-import { HeroComponent } from '../hero/hero.component';
-import { FeaturesComponent } from '../features/features.component';
-import { FooterComponent } from '../footer/footer.component';
+import { HeaderComponent } from '../ComponentesEstructurales/header/header.component';
+import { HeroComponent } from '../ComponentesEstructurales/hero/hero.component';
+import { FeaturesComponent } from '../ComponentesEstructurales/features/features.component';
+import { FooterComponent } from '../ComponentesEstructurales/footer/footer.component';
 import { AuthService } from '../services/auth.service';
 
 @Component({

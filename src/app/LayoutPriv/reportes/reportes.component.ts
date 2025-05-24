@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { HeaderComponent } from '../header/header.component';
+import { HeaderComponent } from '../../ComponentesEstructurales/header/header.component';
 import { Chart, registerables } from 'chart.js';
 Chart.register(...registerables);
 
