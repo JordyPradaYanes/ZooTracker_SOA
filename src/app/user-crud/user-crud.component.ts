@@ -72,7 +72,7 @@ export class UserCrudComponent implements OnInit, OnDestroy {
       this.filteredUsers = [...this.users];
       this.filterUsers(); // Aplicar filtro actual si existe
     } catch (error) {
-      console.error('Error al cargar usuarios:', error);
+      alert('Error al cargar usuarios: ' + error);
       this.showNotification('Error al cargar los usuarios', 'error');
     } finally {
       this.loading = false;
