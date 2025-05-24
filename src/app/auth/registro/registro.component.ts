@@ -18,6 +18,7 @@ export class RegistroComponent implements OnInit {
   email: string = '';
   password: string = '';
   confirmPassword: string = '';
+  
   showPassword: boolean = false;
   errorMessage: string = '';
   isLoading: boolean = false;
