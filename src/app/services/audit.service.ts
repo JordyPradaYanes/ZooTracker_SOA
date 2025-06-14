@@ -36,12 +36,12 @@ export class AuditService {
     this.generateSessionId()
   }
 
-  // NUEVO: Generar ID de sesión único
+  // Generar ID de sesión único
   private generateSessionId(): void {
     this.currentSessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }
 
-  // NUEVO: Obtener ubicación aproximada del usuario
+  // Obtener ubicación aproximada del usuario
   private async getUserLocation(): Promise<string> {
     try {
       // En un entorno real, podrías usar una API de geolocalización
@@ -53,7 +53,7 @@ export class AuditService {
   }
 
   /**
-   * Registra una nueva entrada de auditoría (MEJORADO)
+   * Registra una nueva entrada de auditoría 
    */
   async logAuditEvent(auditData: CreateAuditData): Promise<{ success: boolean; message: string }> {
     try {
@@ -76,7 +76,7 @@ export class AuditService {
         fechaHora: Timestamp.fromDate(auditLog.fechaHora),
       })
 
-      // NUEVO: Actualizar estadísticas de sesión
+      // Actualizar estadísticas de sesión
       await this.updateSessionStats(auditLog.uid, auditLog.nombre)
 
       console.log("Evento de auditoría registrado:", auditLog.accion, auditLog.detalles)
@@ -94,7 +94,7 @@ export class AuditService {
     }
   }
 
-  // NUEVO: Actualizar estadísticas de sesión
+  // Actualizar estadísticas de sesión
   private async updateSessionStats(uid: string, nombre: string): Promise<void> {
     try {
       if (!this.currentSessionId) return
@@ -118,7 +118,7 @@ export class AuditService {
   }
 
   /**
-   * Obtiene los logs de auditoría con filtros opcionales (MEJORADO)
+   * Obtiene los logs de auditoría con filtros opcionales
    */
   async getAuditLogs(filters?: AuditFilters, pageSize = 50): Promise<AuditLog[]> {
     try {
@@ -208,7 +208,7 @@ export class AuditService {
     }
   }
 
-  // NUEVO: Obtener logs por sesión
+  // Obtener logs por sesión
   async getSessionAuditLogs(sessionId: string): Promise<AuditLog[]> {
     try {
       const q = query(this.auditCollection, where("sessionId", "==", sessionId), orderBy("fechaHora", "desc"))
@@ -237,7 +237,7 @@ export class AuditService {
   }
 
   /**
-   * Registra un evento de login (MEJORADO)
+   * Registra un evento de login 
    */
   async logLogin(uid: string, nombre: string): Promise<void> {
     // Generar nuevo ID de sesión para cada login
@@ -253,7 +253,7 @@ export class AuditService {
   }
 
   /**
-   * Registra un evento de logout (MEJORADO)
+   * Registra un evento de logout
    */
   async logLogout(uid: string, nombre: string): Promise<void> {
     await this.logAuditEvent({
@@ -307,7 +307,7 @@ export class AuditService {
     })
   }
 
-  // NUEVO: Registrar exportación de datos
+  // Registrar exportación de datos
   async logDataExport(uid: string, nombre: string, exportType: string, recordCount: number): Promise<void> {
     await this.logAuditEvent({
       uid,
@@ -318,7 +318,7 @@ export class AuditService {
     })
   }
 
-  // NUEVO: Registrar búsqueda realizada
+  // Registrar búsqueda realizada
   async logSearch(uid: string, nombre: string, searchTerm: string, resultsCount: number): Promise<void> {
     await this.logAuditEvent({
       uid,
@@ -329,7 +329,7 @@ export class AuditService {
     })
   }
 
-  // NUEVO: Registrar acceso a página
+  // Registrar acceso a página
   async logPageAccess(uid: string, nombre: string, pageName: string): Promise<void> {
     await this.logAuditEvent({
       uid,
@@ -363,7 +363,7 @@ export class AuditService {
   }
 
   /**
-   * Obtiene las estadísticas de auditoría (MEJORADO)
+   * Obtiene las estadísticas de auditoría
    */
   async getAuditStats(): Promise<{ [key: string]: number }> {
     try {
@@ -381,7 +381,7 @@ export class AuditService {
     }
   }
 
-  // NUEVO: Obtener estadísticas avanzadas
+  // Obtener estadísticas avanzadas
   async getAdvancedStats(): Promise<AuditStats> {
     try {
       const logs = await this.getAuditLogs({}, 5000)
@@ -425,12 +425,12 @@ export class AuditService {
     }
   }
 
-  // NUEVO: Obtener ID de sesión actual
+  // Obtener ID de sesión actual
   getCurrentSessionId(): string | null {
     return this.currentSessionId
   }
 
-  // NUEVO: Limpiar logs antiguos (mantenimiento)
+  // Limpiar logs antiguos (mantenimiento)
   async cleanupOldLogs(daysToKeep = 90): Promise<{ success: boolean; message: string }> {
     try {
       const cutoffDate = new Date()
