@@ -2,9 +2,15 @@ import { Component, type OnInit } from "@angular/core"
 import { CommonModule } from "@angular/common"
 import { FormsModule } from "@angular/forms"
 import { AuditService } from "../services/audit.service"
-import { AuthService } from "../services/auth.service" // NUEVO: Importar AuthService
+import { AuthService } from "../services/auth.service"
 import { type AuditLog, AuditAction, type AuditFilters } from "../interface/audit.interface"
 import { HeaderComponent } from "../ComponentesEstructurales/header/header.component"
+
+// Interfaz para el ordenamiento
+interface SortConfig {
+  field: 'fechaHora' | 'nombre' | null;
+  direction: 'asc' | 'desc';
+}
 
 @Component({
   selector: "app-audit",
@@ -18,7 +24,7 @@ export class AuditComponent implements OnInit {
   auditLogs: AuditLog[] = []
   filteredLogs: AuditLog[] = []
   isLoading = false
-  currentUser: any = null // NUEVO: Usuario actual
+  currentUser: any = null
 
   // Filtros
   filters: AuditFilters = {}
@@ -26,6 +32,12 @@ export class AuditComponent implements OnInit {
   selectedAction = ""
   fechaInicio = ""
   fechaFin = ""
+
+  // NUEVO: Configuración de ordenamiento
+  sortConfig: SortConfig = {
+    field: null,
+    direction: 'asc'
+  }
 
   // Opciones de acciones para el filtro
   auditActions = Object.values(AuditAction)
@@ -41,11 +53,10 @@ export class AuditComponent implements OnInit {
 
   constructor(
     private auditService: AuditService,
-    private authService: AuthService, // NUEVO: Inyectar AuthService
+    private authService: AuthService,
   ) {}
 
   async ngOnInit() {
-    // NUEVO: Obtener usuario actual
     this.authService.user$.subscribe((user) => {
       this.currentUser = user
     })
@@ -53,11 +64,9 @@ export class AuditComponent implements OnInit {
     await this.loadAuditLogs()
     await this.loadStats()
 
-    // NUEVO: Registrar que el usuario accedió a la página de auditoría
     await this.logComponentAction(AuditAction.PROFILE_VIEW, "Acceso a página de auditoría")
   }
 
-  // NUEVO: Método para registrar acciones del componente
   private async logComponentAction(action: AuditAction, details: string): Promise<void> {
     if (this.currentUser) {
       try {
@@ -74,16 +83,87 @@ export class AuditComponent implements OnInit {
     }
   }
 
-  /**
-   * Carga los logs de auditoría
-   */
+  // NUEVO: Método para ordenar los datos
+  sortData(field: 'fechaHora' | 'nombre'): void {
+    if (this.sortConfig.field === field) {
+      // Si ya está ordenado por este campo, cambiar dirección
+      this.sortConfig.direction = this.sortConfig.direction === 'asc' ? 'desc' : 'asc'
+    } else {
+      // Si es un campo nuevo, ordenar ascendente
+      this.sortConfig.field = field
+      this.sortConfig.direction = 'asc'
+    }
+
+    this.applySorting()
+    this.calculatePagination()
+    this.currentPage = 1
+
+    // Registrar acción de ordenamiento
+    this.logComponentAction(
+      AuditAction.PROFILE_VIEW, 
+      `Ordenamiento aplicado: ${field} ${this.sortConfig.direction}`
+    )
+  }
+
+  // NUEVO: Aplicar ordenamiento a los datos filtrados
+  private applySorting(): void {
+    if (!this.sortConfig.field) return
+
+    this.filteredLogs.sort((a, b) => {
+      let valueA: any
+      let valueB: any
+
+      switch (this.sortConfig.field) {
+        case 'fechaHora':
+          valueA = new Date(a.fechaHora).getTime()
+          valueB = new Date(b.fechaHora).getTime()
+          break
+        case 'nombre':
+          valueA = a.nombre.toLowerCase()
+          valueB = b.nombre.toLowerCase()
+          break
+        default:
+          return 0
+      }
+
+      if (valueA < valueB) {
+        return this.sortConfig.direction === 'asc' ? -1 : 1
+      }
+      if (valueA > valueB) {
+        return this.sortConfig.direction === 'asc' ? 1 : -1
+      }
+      return 0
+    })
+  }
+
+  // NUEVO: Obtener el icono de ordenamiento para un campo
+  getSortIcon(field: 'fechaHora' | 'nombre'): string {
+    if (this.sortConfig.field !== field) {
+      return 'sort' // Icono neutral
+    }
+    return this.sortConfig.direction === 'asc' ? 'sort-up' : 'sort-down'
+  }
+
+  // NUEVO: Verificar si un campo está siendo ordenado
+  isSorted(field: 'fechaHora' | 'nombre'): boolean {
+    return this.sortConfig.field === field
+  }
+
+  // NUEVO: Limpiar ordenamiento
+  clearSort(): void {
+    this.sortConfig = {
+      field: null,
+      direction: 'asc'
+    }
+    this.applyFilters() // Reaplica filtros sin ordenamiento
+  }
+
   async loadAuditLogs() {
     this.isLoading = true
     try {
       this.auditLogs = await this.auditService.getAuditLogs(this.filters, 500)
       this.applyFilters()
 
-      // NUEVO: Registrar acción de carga de datos
       await this.logComponentAction(AuditAction.PROFILE_VIEW, "Carga de logs de auditoría")
     } catch (error) {
       console.error("Error al cargar logs:", error)
@@ -92,9 +172,6 @@ export class AuditComponent implements OnInit {
     }
   }
 
-  /**
-   * Carga las estadísticas
-   */
   async loadStats() {
     this.stats = await this.auditService.getAuditStats()
   }
@@ -107,9 +184,6 @@ export class AuditComponent implements OnInit {
     })
   }
 
-  /**
-   * Obtiene las iniciales del nombre de usuario
-   */
   getInitials(nombre: string): string {
     return nombre
       .split(" ")
@@ -119,9 +193,6 @@ export class AuditComponent implements OnInit {
       .slice(0, 2)
   }
 
-  /**
-   * Obtiene el emoji correspondiente a cada tipo de acción
-   */
   getActionEmoji(action: AuditAction): string {
     const emojis: { [key: string]: string } = {
       [AuditAction.LOGIN]: "🔐",
@@ -135,9 +206,6 @@ export class AuditComponent implements OnInit {
     return emojis[action] || "📝"
   }
 
-  /**
-   * Obtiene el porcentaje para las barras de progreso
-   */
   getPercentage(action: string): number {
     const total = this.filteredLogs.length
     if (total === 0) return 0
@@ -145,9 +213,6 @@ export class AuditComponent implements OnInit {
     return Math.round((count / total) * 100)
   }
 
-  /**
-   * Cuenta los filtros activos
-   */
   getActiveFiltersCount(): number {
     let count = 0
     if (this.searchNombre?.trim()) count++
@@ -157,9 +222,7 @@ export class AuditComponent implements OnInit {
     return count
   }
 
-  /**
-   * Aplica los filtros locales
-   */
+  // MODIFICADO: Aplicar filtros y luego ordenamiento
   async applyFilters() {
     let filtered = [...this.auditLogs]
 
@@ -183,72 +246,59 @@ export class AuditComponent implements OnInit {
     // Filtro por fecha de fin
     if (this.fechaFin) {
       const fechaFinDate = new Date(this.fechaFin)
-      fechaFinDate.setHours(23, 59, 59, 999) // Final del día
+      fechaFinDate.setHours(23, 59, 59, 999)
       filtered = filtered.filter((log) => log.fechaHora <= fechaFinDate)
     }
 
     this.filteredLogs = filtered
+    
+    // NUEVO: Aplicar ordenamiento después de filtrar
+    this.applySorting()
+    
     this.calculatePagination()
-    this.currentPage = 1 // Resetear a primera página
+    this.currentPage = 1
 
-    // NUEVO: Registrar aplicación de filtros
     const filterDetails = `Filtros aplicados - Nombre: ${this.searchNombre || "N/A"}, Acción: ${this.selectedAction || "N/A"}, Fecha inicio: ${this.fechaInicio || "N/A"}, Fecha fin: ${this.fechaFin || "N/A"}`
     await this.logComponentAction(AuditAction.PROFILE_VIEW, filterDetails)
   }
 
-  /**
-   * Calcula la paginación
-   */
   calculatePagination() {
     this.totalPages = Math.ceil(this.filteredLogs.length / this.itemsPerPage)
   }
 
-  /**
-   * Obtiene los logs de la página actual
-   */
   get paginatedLogs(): AuditLog[] {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage
     const endIndex = startIndex + this.itemsPerPage
     return this.filteredLogs.slice(startIndex, endIndex)
   }
 
-  /**
-   * Cambia la página
-   */
   async changePage(page: number) {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page
-
-      // NUEVO: Registrar cambio de página
       await this.logComponentAction(AuditAction.PROFILE_VIEW, `Navegación a página ${page} de auditoría`)
     }
   }
 
-  /**
-   * Limpia todos los filtros
-   */
+  // MODIFICADO: Limpiar filtros y ordenamiento
   async clearFilters() {
     this.searchNombre = ""
     this.selectedAction = ""
     this.fechaInicio = ""
     this.fechaFin = ""
     this.filters = {}
+    
+    // NUEVO: También limpiar ordenamiento
+    this.clearSort()
+    
     this.applyFilters()
 
-    // NUEVO: Registrar limpieza de filtros
-    await this.logComponentAction(AuditAction.UPDATE, "Filtros de auditoría limpiados")
+    await this.logComponentAction(AuditAction.UPDATE, "Filtros y ordenamiento limpiados")
   }
 
-  /**
-   * Formatea la fecha
-   */
   formatDate(date: Date): string {
     return this.auditService.formatDate(date)
   }
 
-  /**
-   * Obtiene la clase CSS para el tipo de acción
-   */
   getActionClass(action: AuditAction): string {
     const classes: { [key: string]: string } = {
       [AuditAction.LOGIN]: "bg-green-100 text-green-800",
@@ -262,9 +312,6 @@ export class AuditComponent implements OnInit {
     return classes[action] || "bg-gray-100 text-gray-800"
   }
 
-  /**
-   * Traduce la acción al español
-   */
   translateAction(action: AuditAction): string {
     const translations: { [key: string]: string } = {
       [AuditAction.LOGIN]: "Inicio de Sesión",
@@ -278,9 +325,6 @@ export class AuditComponent implements OnInit {
     return translations[action] || action
   }
 
-  /**
-   * Obtiene el array de páginas para la paginación
-   */
   get pageNumbers(): number[] {
     const pages: number[] = []
     const maxVisiblePages = 5
@@ -299,9 +343,6 @@ export class AuditComponent implements OnInit {
     return pages
   }
 
-  /**
-   * Exporta los datos a CSV
-   */
   async exportToCSV() {
     const headers = ["Fecha y Hora", "Usuario", "Acción", "Detalles", "IP"]
     const csvData = this.filteredLogs.map((log) => [
@@ -324,27 +365,18 @@ export class AuditComponent implements OnInit {
     link.click()
     document.body.removeChild(link)
 
-    // NUEVO: Registrar exportación de datos
     await this.logComponentAction(
       AuditAction.PROFILE_VIEW,
       `Exportación de ${this.filteredLogs.length} registros de auditoría a CSV`,
     )
   }
 
-  /**
-   * Refresca los datos
-   */
   async refresh() {
     await this.loadAuditLogs()
     await this.loadStats()
-
-    // NUEVO: Registrar actualización manual
     await this.logComponentAction(AuditAction.UPDATE, "Actualización manual de datos de auditoría")
   }
 
-  /**
-   * TrackBy function para optimizar el rendimiento del *ngFor
-   */
   trackByLogId(index: number, log: AuditLog): string {
     return log.id || index.toString()
   }
