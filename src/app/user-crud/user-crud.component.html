@@ -315,121 +315,135 @@
 </div>
 
 <!-- Enhanced Modal -->
+<!-- Enhanced Modal con Scroll Vertical -->
 <div *ngIf="modalConfig.isOpen" class="fixed inset-0 z-50 overflow-y-auto">
-  <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+  <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:items-center sm:p-0">
     <!-- Backdrop -->
     <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" (click)="closeModal()"></div>
 
     <!-- Modal -->
-    <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-      <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-        <div class="sm:flex sm:items-start">
-          <div class="w-full">
-            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
-              {{ modalConfig.title }}
-            </h3>
+    <div class="relative align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full max-h-[90vh] flex flex-col">
+      <!-- Header fijo -->
+      <div class="bg-white px-4 pt-5 pb-4 sm:px-6 border-b border-gray-200 flex-shrink-0">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg leading-6 font-medium text-gray-900">
+            {{ modalConfig.title }}
+          </h3>
+          <button
+            type="button"
+            (click)="closeModal()"
+            class="text-gray-400 hover:text-gray-600 focus:outline-none focus:text-gray-600 transition ease-in-out duration-150"
+          >
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </div>
 
-            <!-- Edit Form -->
-            <form *ngIf="modalConfig.mode === 'edit'" [formGroup]="userForm" class="space-y-4">
-              <!-- Campos Editables -->
+      <!-- Contenido con scroll -->
+      <div class="flex-1 overflow-y-auto px-4 py-4 sm:px-6">
+        <div class="w-full">
+          <!-- Edit Form -->
+          <form *ngIf="modalConfig.mode === 'edit'" [formGroup]="userForm" class="space-y-4">
+            <!-- Campos Editables -->
+            <div>
+              <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre completo</label>
+              <input
+                type="text"
+                id="nombre"
+                formControlName="nombre"
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                [class.border-red-300]="userForm.get('nombre')?.invalid && userForm.get('nombre')?.touched"
+              >
+              <p *ngIf="userForm.get('nombre')?.invalid && userForm.get('nombre')?.touched" class="mt-1 text-sm text-red-600">
+                El nombre es requerido
+              </p>
+            </div>
+
+            <div>
+              <label for="telefono" class="block text-sm font-medium text-gray-700">Teléfono</label>
+              <input
+                type="tel"
+                id="telefono"
+                formControlName="telefono"
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              >
+            </div>
+
+            <!-- Campos No Editables (Solo Lectura) -->
+            <div class="bg-gray-50 p-4 rounded-lg border">
+              <h4 class="text-sm font-medium text-gray-700 mb-3">Información del Sistema (No editable)</h4>
+              
+              <div class="grid grid-cols-1 gap-3">
+                <div>
+                  <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider">Correo electrónico</label>
+                  <p class="mt-1 text-sm text-gray-900 bg-white px-3 py-2 border border-gray-200 rounded-md">
+                    {{ modalConfig.user?.correo }}
+                  </p>
+                  <p class="mt-1 text-xs text-gray-500">El correo no se puede modificar por seguridad</p>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider">Provider</label>
+                  <p class="mt-1 text-sm text-gray-900 bg-white px-3 py-2 border border-gray-200 rounded-md">
+                    {{ modalConfig.user?.provider || 'N/A' }}
+                  </p>
+                  <p class="mt-1 text-xs text-gray-500">Método de autenticación original</p>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha de registro</label>
+                  <p class="mt-1 text-sm text-gray-900 bg-white px-3 py-2 border border-gray-200 rounded-md">
+                    {{ formatDate(modalConfig.user?.fechaCreacion) }}
+                  </p>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider">ID de usuario</label>
+                  <p class="mt-1 text-sm text-gray-900 bg-white px-3 py-2 border border-gray-200 rounded-md font-mono">
+                    {{ modalConfig.user?.uid }}
+                  </p>
+                  <p class="mt-1 text-xs text-gray-500">Identificador único del sistema</p>
+                </div>
+              </div>
+            </div>
+          </form>
+
+          <!-- View Details -->
+          <div *ngIf="modalConfig.mode === 'view' && modalConfig.user" class="space-y-4">
+            <div class="grid grid-cols-1 gap-4">
               <div>
-                <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre completo</label>
-                <input
-                  type="text"
-                  id="nombre"
-                  formControlName="nombre"
-                  class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                  [class.border-red-300]="userForm.get('nombre')?.invalid && userForm.get('nombre')?.touched"
-                >
-                <p *ngIf="userForm.get('nombre')?.invalid && userForm.get('nombre')?.touched" class="mt-1 text-sm text-red-600">
-                  El nombre es requerido
-                </p>
+                <label class="block text-sm font-medium text-gray-700">Nombre</label>
+                <p class="mt-1 text-sm text-gray-900">{{ modalConfig.user.nombre }}</p>
               </div>
-
               <div>
-                <label for="telefono" class="block text-sm font-medium text-gray-700">Teléfono</label>
-                <input
-                  type="tel"
-                  id="telefono"
-                  formControlName="telefono"
-                  class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                >
+                <label class="block text-sm font-medium text-gray-700">Correo</label>
+                <p class="mt-1 text-sm text-gray-900">{{ modalConfig.user.correo }}</p>
               </div>
-
-              <!-- Campos No Editables (Solo Lectura) -->
-              <div class="bg-gray-50 p-4 rounded-lg border">
-                <h4 class="text-sm font-medium text-gray-700 mb-3">Información del Sistema (No editable)</h4>
-                
-                <div class="grid grid-cols-1 gap-3">
-                  <div>
-                    <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider">Correo electrónico</label>
-                    <p class="mt-1 text-sm text-gray-900 bg-white px-3 py-2 border border-gray-200 rounded-md">
-                      {{ modalConfig.user?.correo }}
-                    </p>
-                    <p class="mt-1 text-xs text-gray-500">El correo no se puede modificar por seguridad</p>
-                  </div>
-
-                  <div>
-                    <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider">Provider</label>
-                    <p class="mt-1 text-sm text-gray-900 bg-white px-3 py-2 border border-gray-200 rounded-md">
-                      {{ modalConfig.user?.provider || 'N/A' }}
-                    </p>
-                    <p class="mt-1 text-xs text-gray-500">Método de autenticación original</p>
-                  </div>
-
-                  <div>
-                    <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha de registro</label>
-                    <p class="mt-1 text-sm text-gray-900 bg-white px-3 py-2 border border-gray-200 rounded-md">
-                      {{ formatDate(modalConfig.user?.fechaCreacion) }}
-                    </p>
-                  </div>
-
-                  <div>
-                    <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider">ID de usuario</label>
-                    <p class="mt-1 text-sm text-gray-900 bg-white px-3 py-2 border border-gray-200 rounded-md font-mono">
-                      {{ modalConfig.user?.uid }}
-                    </p>
-                    <p class="mt-1 text-xs text-gray-500">Identificador único del sistema</p>
-                  </div>
-                </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Teléfono</label>
+                <p class="mt-1 text-sm text-gray-900">{{ modalConfig.user.telefono || 'No especificado' }}</p>
               </div>
-            </form>
-
-            <!-- View Details -->
-            <div *ngIf="modalConfig.mode === 'view' && modalConfig.user" class="space-y-4">
-              <div class="grid grid-cols-1 gap-4">
-                <div>
-                  <label class="block text-sm font-medium text-gray-700">Nombre</label>
-                  <p class="mt-1 text-sm text-gray-900">{{ modalConfig.user.nombre }}</p>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700">Correo</label>
-                  <p class="mt-1 text-sm text-gray-900">{{ modalConfig.user.correo }}</p>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700">Teléfono</label>
-                  <p class="mt-1 text-sm text-gray-900">{{ modalConfig.user.telefono || 'No especificado' }}</p>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700">Provider</label>
-                  <p class="mt-1 text-sm text-gray-900">{{ modalConfig.user.provider || 'N/A' }}</p>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700">Fecha de registro</label>
-                  <p class="mt-1 text-sm text-gray-900">{{ formatDate(modalConfig.user.fechaCreacion) }}</p>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700">ID de usuario</label>
-                  <p class="mt-1 text-sm text-gray-900 font-mono">{{ modalConfig.user.uid }}</p>
-                </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Provider</label>
+                <p class="mt-1 text-sm text-gray-900">{{ modalConfig.user.provider || 'N/A' }}</p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Fecha de registro</label>
+                <p class="mt-1 text-sm text-gray-900">{{ formatDate(modalConfig.user.fechaCreacion) }}</p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">ID de usuario</label>
+                <p class="mt-1 text-sm text-gray-900 font-mono">{{ modalConfig.user.uid }}</p>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Modal Actions -->
-      <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+      <!-- Footer fijo -->
+      <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse border-t border-gray-200 flex-shrink-0">
         <!-- Edit Actions -->
         <div *ngIf="modalConfig.mode === 'edit'" class="sm:flex sm:flex-row-reverse w-full gap-3">
           <button
@@ -467,28 +481,6 @@
           </button>
         </div>
       </div>
-    </div>
-  </div>
-</div>
-
-<!-- Toast Notifications -->
-<div *ngIf="notification.show" class="fixed top-4 right-4 z-50">
-  <div [ngClass]="{
-    'bg-green-500': notification.type === 'success',
-    'bg-red-500': notification.type === 'error',
-    'bg-blue-500': notification.type === 'info'
-  }" class="rounded-lg shadow-lg p-4 text-white max-w-sm">
-    <div class="flex items-center">
-      <svg *ngIf="notification.type === 'success'" class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-      </svg>
-      <svg *ngIf="notification.type === 'error'" class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-      </svg>
-      <svg *ngIf="notification.type === 'info'" class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-      </svg>
-      <span class="text-sm font-medium">{{ notification.message }}</span>
     </div>
   </div>
 </div>
