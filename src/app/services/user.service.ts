@@ -4,7 +4,7 @@ import {
   Firestore, 
   collection, 
   doc, 
-  setDoc, // Cambiado de addDoc a setDoc
+  setDoc,
   updateDoc, 
   deleteDoc, 
   getDoc, 
@@ -57,6 +57,7 @@ export class UserService {
         nombre: userData.nombre,
         correo: userData.correo,
         telefono: userData.telefono,
+        provider: userData.provider, // Guardar el provider aquí
         fechaCreacion: new Date(),
         fechaActualizacion: new Date()
       };
@@ -79,7 +80,10 @@ export class UserService {
   }
 
   // Crear usuario solo en Firestore (para auth social)
-  async createUserProfile(uid: string, userData: Omit<User, 'uid' | 'fechaCreacion' | 'fechaActualizacion'>): Promise<{ success: boolean; message: string; user?: User }> {
+  async createUserProfile(
+    uid: string, 
+    userData: Omit<User, 'uid' | 'fechaCreacion' | 'fechaActualizacion'>
+  ): Promise<{ success: boolean; message: string; user?: User }> {
     try {
       const userDoc: User = {
         uid,
@@ -99,6 +103,41 @@ export class UserService {
       return {
         success: false,
         message: 'Error al crear perfil: ' + error.message
+      };
+    }
+  }
+
+  // Método específico para crear perfil después de autenticación social
+  async createSocialUserProfile(
+    uid: string, 
+    nombre: string, 
+    correo: string, 
+    provider: string,
+    telefono: string = '',
+    photoURL?: string
+  ): Promise<{ success: boolean; message: string; user?: User }> {
+    try {
+      const userDoc: User = {
+        uid,
+        nombre,
+        correo,
+        telefono,
+        provider, // Guardar el provider específico (google, facebook, etc.)
+        fechaCreacion: new Date(),
+        fechaActualizacion: new Date()
+      };
+
+      await this.setUserDocument(uid, userDoc);
+
+      return {
+        success: true,
+        message: 'Perfil de usuario social creado exitosamente',
+        user: userDoc
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        message: 'Error al crear perfil social: ' + error.message
       };
     }
   }
@@ -171,6 +210,27 @@ export class UserService {
     }
   }
 
+  // Obtener usuarios por proveedor
+  async getUsersByProvider(provider: string): Promise<User[]> {
+    try {
+      const q = query(this.usersCollection, where('provider', '==', provider));
+      const querySnapshot = await getDocs(q);
+      
+      return querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          uid: doc.id,
+          ...data,
+          fechaCreacion: data['fechaCreacion']?.toDate() || data['fechaCreacion'],
+          fechaActualizacion: data['fechaActualizacion']?.toDate() || data['fechaActualizacion']
+        };
+      }) as User[];
+    } catch (error) {
+      console.error('Error al obtener usuarios por proveedor:', error);
+      return [];
+    }
+  }
+
   // Obtener todos los usuarios
   async getAllUsers(): Promise<User[]> {
     try {
@@ -216,6 +276,28 @@ export class UserService {
       return {
         success: false,
         message: 'Error al actualizar usuario: ' + error.message
+      };
+    }
+  }
+
+  // Actualizar proveedor específicamente
+  async updateUserProvider(uid: string, provider: string): Promise<{ success: boolean; message: string }> {
+    try {
+      const userDocRef = doc(this.firestore, 'users', uid);
+      
+      await updateDoc(userDocRef, {
+        provider: provider,
+        fechaActualizacion: new Date()
+      });
+
+      return {
+        success: true,
+        message: 'Proveedor actualizado exitosamente'
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        message: 'Error al actualizar proveedor: ' + error.message
       };
     }
   }

@@ -5,6 +5,7 @@ import { UserService } from '../services/user.service';
 import { AuthService } from '../services/auth.service';
 import { User, CreateUserData } from '../interface/user.interface';
 import { Subscription } from 'rxjs';
+import { HeaderComponent } from "../ComponentesEstructurales/header/header.component";
 
 interface ModalConfig {
   isOpen: boolean;
@@ -16,7 +17,7 @@ interface ModalConfig {
 @Component({
   selector: 'app-user-crud',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, HeaderComponent],
   templateUrl: './user-crud.component.html',
   styleUrls: []
 })
@@ -140,7 +141,8 @@ export class UserCrudComponent implements OnInit, OnDestroy {
         nombre: formData.nombre.trim(),
         correo: formData.correo.trim(),
         telefono: formData.telefono?.trim() || '',
-        contraseña: formData.contraseña
+        contraseña: formData.contraseña,
+        provider: formData.provider
       };
 
       const result = await this.userService.createUser(userData);
