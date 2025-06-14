@@ -1,126 +1,149 @@
 <style>
-    .nav-item {
-      position: relative;
-      padding: 0.5rem 0;
-    }
-  
-    .nav-item::after {
-      content: '';
-      position: absolute;
-      width: 100%;
-      height: 2px;
-      bottom: 0;
-      left: 0;
-      background-color: white;
-      transform: scaleX(0);
-      transform-origin: right;
-      transition: transform 0.3s ease-in-out;
-    }
-  
-    .nav-item:hover::after {
-      transform: scaleX(1);
-      transform-origin: left;
-    }
-  
-    .nav-item a {
-      font-family: 'Poppins', sans-serif;
-      font-weight: 500;
-      letter-spacing: 0.5px;
-      transition: color 0.3s ease-in-out;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem; /* Espacio entre el ícono y el texto */
-    }
-  
-    .nav-item a:hover {
-      color: #fecaca; /* Cambia el color al hacer hover */
-    }
-  </style>
-  
-  <!-- Importar FontAwesome -->
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-  />
-  
-  <header class="bg-red-600 text-white p-4 shadow-lg">
-    <div class="container mx-auto flex justify-between items-center">
-      <!-- Logo y nombre del proyecto -->
-      <div class="flex items-center">
-        <img
-          src="assets/logoU3.png"
-          alt="Logo UFPSO"
-          class="h-16 mr-3 bg-white rounded-md border-white border-2"
-        />
-        <h1 class="text-2xl font-bold font-poppins">ZooTracker</h1>
-      </div>
-  
-      <!-- Menú de navegación -->
-      <nav>
-        <ul class="flex space-x-8">
-  
-          <!-- Registros -->
-          <li class="nav-item" *ngIf="isLoggedIn$ | async">
-            <a routerLink="/registros" routerLinkActive="active" class="text-lg hover:text-red-200">
-              <i class="fas fa-clipboard-list text-xl"></i> <!-- Ícono de registros -->
-              Registros
-            </a>
-          </li>
-  
-          <!-- Reportes -->
-          <li class="nav-item" *ngIf="isLoggedIn$ | async">
-            <a routerLink="/reportes" routerLinkActive="active" class="text-lg hover:text-red-200">
-              <i class="fas fa-chart-bar text-xl"></i> <!-- Ícono de reportes -->
-              Reportes
-            </a>
-          </li>
+  .nav-item {
+    position: relative;
+    padding: 0.5rem 0;
+  }
 
-          <!-- Inventario -->
-          <li class="nav-item" *ngIf="isLoggedIn$ | async">
-            <a routerLink="/inventario" routerLinkActive="active" class="text-lg hover:text-red-200">
-              <i class="fas fa-box-open text-xl"></i> <!-- Ícono de inventario -->
-              Inventario
-            </a>
-          </li>
+  .nav-item::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: white;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease-in-out;
+  }
 
-          <!-- user-crud -->
-          <li class="nav-item" *ngIf="isLoggedIn$ | async">
-            <a routerLink="/userCrud" routerLinkActive="active" class="text-lg hover:text-red-200">
-              <i class="fas fa-box-open text-xl"></i> <!-- Ícono de inventario -->
-              User Crud
-            </a>
-          </li>
+  .nav-item:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
 
-          <!-- Audit -->
-          <li class="nav-item" *ngIf="isLoggedIn$ | async">
-            <a routerLink="/audit" routerLinkActive="active" class="text-lg hover:text-red-200">
-              <i class="fas fa-box-open text-xl"></i> <!-- Ícono de inventario -->
-              Auditoria
-            </a>
-          </li>
-  
-          <!-- Login y Cerrar Sesion-->
-          <li class="nav-item">
-            <ng-container *ngIf="isLoggedIn$ | async; else loginBtn">
-              <a (click)="logout()" class="text-lg hover:text-red-200">
-                <i class="fas fa-sign-out-alt text-xl"></i> <!-- Ícono de cerrar sesión -->
-                Cerrar Sesión
-              </a>
+  .nav-item a {
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    transition: color 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* Espacio entre el ícono y el texto */
+  }
 
-            </ng-container>
-            <ng-template #loginBtn>
-              <a
-                routerLink="/login"
-                routerLinkActive="active"
-                ariaCurrentWhenActive="page"
-                class="text-lg hover:text-red-200"
-              >
-                <i class="fas fa-sign-in-alt text-xl"></i> <!-- Ícono de login -->
-                Login
-              </a>
-            </ng-template>
-          </li>
-        </ul>
-      </nav>
+  .nav-item a:hover {
+    color: #fecaca; /* Cambia el color al hacer hover */
+  }
+</style>
+
+<!-- Importar FontAwesome -->
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+/>
+
+<header class="bg-red-600 text-white p-4 shadow-lg">
+  <div class="container mx-auto flex justify-between items-center">
+    <!-- Logo y nombre del proyecto -->
+    <div class="flex items-center">
+      <img
+        src="assets/logoU3.png"
+        alt="Logo UFPSO"
+        class="h-16 mr-3 bg-white rounded-md border-white border-2"
+      />
+      <h1 class="text-2xl font-bold font-poppins">ZooTracker</h1>
     </div>
-  </header>
+
+    <!-- Menú de navegación -->
+    <nav>
+      <ul class="flex space-x-8">
+        <!-- Registros -->
+        <li class="nav-item" *ngIf="isLoggedIn$ | async">
+          <a
+            routerLink="/registros"
+            routerLinkActive="active"
+            class="text-lg hover:text-red-200"
+          >
+            <i class="fas fa-clipboard-list text-xl"></i>
+            <!-- Ícono de registros -->
+            Registros
+          </a>
+        </li>
+
+        <!-- Reportes -->
+        <li class="nav-item" *ngIf="isLoggedIn$ | async">
+          <a
+            routerLink="/reportes"
+            routerLinkActive="active"
+            class="text-lg hover:text-red-200"
+          >
+            <i class="fas fa-chart-bar text-xl"></i>
+            <!-- Ícono de reportes -->
+            Reportes
+          </a>
+        </li>
+
+        <!-- Inventario -->
+        <li class="nav-item" *ngIf="isLoggedIn$ | async">
+          <a
+            routerLink="/inventario"
+            routerLinkActive="active"
+            class="text-lg hover:text-red-200"
+          >
+            <i class="fas fa-box-open text-xl"></i>
+            <!-- Ícono de inventario -->
+            Inventario
+          </a>
+        </li>
+
+        <!-- user-crud -->
+        <li class="nav-item" *ngIf="isLoggedIn$ | async">
+          <a
+            routerLink="/userCrud"
+            routerLinkActive="active"
+            class="text-lg hover:text-red-200"
+          >
+            <i class="fa-solid fa-users-gear"></i>
+            User Crud
+          </a>
+        </li>
+
+        <!-- Audit -->
+        <li class="nav-item" *ngIf="isLoggedIn$ | async">
+          <a
+            routerLink="/audit"
+            routerLinkActive="active"
+            class="text-lg hover:text-red-200"
+          >
+            <i class="fa-solid fa-check-to-slot"></i>
+            Auditoria
+          </a>
+        </li>
+
+        <!-- Login y Cerrar Sesion-->
+        <li class="nav-item">
+          <ng-container *ngIf="isLoggedIn$ | async; else loginBtn">
+            <a (click)="logout()" class="text-lg hover:text-red-200">
+              <i class="fas fa-sign-out-alt text-xl"></i>
+              <!-- Ícono de cerrar sesión -->
+              Cerrar Sesión
+            </a>
+          </ng-container>
+          <ng-template #loginBtn>
+            <a
+              routerLink="/login"
+              routerLinkActive="active"
+              ariaCurrentWhenActive="page"
+              class="text-lg hover:text-red-200"
+            >
+              <i class="fas fa-sign-in-alt text-xl"></i>
+              <!-- Ícono de login -->
+              Login
+            </a>
+          </ng-template>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>

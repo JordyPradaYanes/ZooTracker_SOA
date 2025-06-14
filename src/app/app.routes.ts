@@ -10,6 +10,7 @@ import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password.
 import { UserCrudComponent } from './user-crud/user-crud.component';
 import { AuditComponent } from './audit/audit.component';
 
+
 export const routes: Routes = [
 	{ path: '', component: MainPageComponent},
 	{ path: 'regresar', component: MainPageComponent},
