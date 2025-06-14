@@ -53,6 +53,7 @@ export class UserCrudComponent implements OnInit, OnDestroy {
       nombre: ['', [Validators.required, Validators.minLength(2)]],
       correo: ['', [Validators.required, Validators.email]],
       telefono: [''],
+      provider: ['email', [Validators.required]],
       contraseña: ['', [Validators.minLength(6)]]
     });
   }

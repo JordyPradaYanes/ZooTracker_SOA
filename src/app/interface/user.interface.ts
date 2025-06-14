@@ -1,55 +1,39 @@
-// user.interface.ts
+// user.interface.ts - Interfaz mejorada
+
 export interface User {
   uid?: string;
-  nombre: string;
-  correo: string;
-  telefono: string;
-  provider: string; // Proveedor de autenticación (ej. 'google', 'email', etc.)
-  fechaCreacion?: Date;
-  fechaActualizacion?: Date;
+  nombre: string;           // Campo principal para nombre
+  correo: string;          // Campo principal para email
+  telefono?: string;
+  provider?: string;       // 'email', 'github', 'google', etc.
+  fechaCreacion?: Date | any;
+  fechaActualizacion: Date;
+  // Campos adicionales para usuarios sociales
+  displayName?: string;    // Nombre del proveedor social
+  email?: string;          // Email del proveedor social
+  photoURL?: string | null;
+  emailVerified?: boolean;
+  lastLoginAt?: Date | any;
+  
+  // Metadatos
+  createdAt?: Date | any;
+  registeredAt?: Date | any;
+  updatedAt?: Date | any;
 }
 
 export interface CreateUserData {
   nombre: string;
-  telefono: string;
   correo: string;
-  contraseña: string;
-  provider: string; // Agregar provider aquí también
-}
-
-// Interfaces adicionales útiles para el manejo de usuarios
-export interface UserUpdateData {
-  nombre?: string;
   telefono?: string;
-  correo?: string;
+  contraseña: string;
   provider?: string;
 }
 
-export interface UserResponse {
-  success: boolean;
-  message: string;
-  user?: User;
-}
-
-export interface AuthResponse {
-  success: boolean;
-  message: string;
-  user?: User;
-}
-
-// Interface para datos de usuario de redes sociales
 export interface SocialUserData {
-  nombre: string;
-  correo: string;
+  uid: string;
+  displayName: string;
+  email: string;
+  provider: string;
   telefono?: string;
   photoURL?: string;
-  provider: string; // Agregar provider
-}
-
-// Interface para el perfil completo del usuario
-export interface UserProfile extends User {
-  photoURL?: string;
-  emailVerified?: boolean;
-  providerId?: string;
-  lastLoginAt?: Date;
 }
