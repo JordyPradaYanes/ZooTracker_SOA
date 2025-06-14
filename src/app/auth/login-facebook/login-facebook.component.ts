@@ -18,6 +18,7 @@ export class LoginFacebookComponent implements OnInit {
   showPassword: boolean = false;
   isLoading: boolean = false;
   errorMessage: string = '';
+  provider: string = 'facebook'; // Por defecto, inicio de sesión con Facebook
   
   // Alert modal properties
   showAlert: boolean = false;
