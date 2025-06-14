@@ -1,44 +1,80 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, type OnInit, type OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  FormsModule,
+  FormBuilder,
+  type FormGroup,
+  Validators,
+} from '@angular/forms';
 import { UserService } from '../services/user.service';
 import { AuthService } from '../services/auth.service';
-import { User, CreateUserData } from '../interface/user.interface';
-import { Subscription } from 'rxjs';
+import type { User } from '../interface/user.interface';
+import type { Subscription } from 'rxjs';
+import { HeaderComponent } from '../ComponentesEstructurales/header/header.component';
 
 interface ModalConfig {
   isOpen: boolean;
-  mode: 'create' | 'edit' | 'view' | 'delete';
+  mode: 'edit' | 'view';
   title: string;
   user?: User;
+}
+
+interface FilterConfig {
+  provider: string;
+  dateRange: string;
+}
+
+interface SortConfig {
+  field: 'nombre' | 'correo' | 'fechaCreacion' | 'provider';
+  direction: 'asc' | 'desc';
 }
 
 @Component({
   selector: 'app-user-crud',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, HeaderComponent],
   templateUrl: './user-crud.component.html',
-  styleUrls: []
+  styleUrls: [],
 })
 export class UserCrudComponent implements OnInit, OnDestroy {
+  onImageError(event: Event, user: any) {
+    const img = event.target as HTMLImageElement | null;
+    if (img) {
+      img.style.display = 'none';
+      user.photoURL = null; // This will hide the image and show initials
+    }
+  }
   users: User[] = [];
   filteredUsers: User[] = [];
   loading = false;
   processing = false;
   searchTerm = '';
-  
+
   userForm: FormGroup;
-  
+
+  // Configuración de filtros
+  filters: FilterConfig = {
+    provider: '',
+    dateRange: '',
+  };
+
+  // Configuración de ordenamiento
+  sortConfig: SortConfig = {
+    field: 'fechaCreacion',
+    direction: 'desc',
+  };
+
   modalConfig: ModalConfig = {
     isOpen: false,
-    mode: 'create',
-    title: ''
+    mode: 'view',
+    title: '',
   };
 
   notification = {
     show: false,
     type: 'success' as 'success' | 'error' | 'info',
-    message: ''
+    message: '',
   };
 
   private subscriptions: Subscription[] = [];
@@ -50,9 +86,8 @@ export class UserCrudComponent implements OnInit, OnDestroy {
   ) {
     this.userForm = this.fb.group({
       nombre: ['', [Validators.required, Validators.minLength(2)]],
-      correo: ['', [Validators.required, Validators.email]],
       telefono: [''],
-      contraseña: ['', [Validators.minLength(6)]]
+      photoURL: [''],
     });
   }
 
@@ -61,7 +96,7 @@ export class UserCrudComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subscriptions.forEach(sub => sub.unsubscribe());
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
   // Cargar todos los usuarios
@@ -69,53 +104,181 @@ export class UserCrudComponent implements OnInit, OnDestroy {
     this.loading = true;
     try {
       this.users = await this.userService.getAllUsers();
-      this.filteredUsers = [...this.users];
-      this.filterUsers(); // Aplicar filtro actual si existe
+      this.applyFilters();
     } catch (error) {
-      alert('Error al cargar usuarios: ' + error);
+      console.error('Error al cargar usuarios:', error);
       this.showNotification('Error al cargar los usuarios', 'error');
     } finally {
       this.loading = false;
     }
   }
 
-  // Filtrar usuarios por término de búsqueda
-  filterUsers(): void {
-    if (!this.searchTerm.trim()) {
-      this.filteredUsers = [...this.users];
-      return;
+  // Aplicar todos los filtros y ordenamiento
+  applyFilters(): void {
+    let filtered = [...this.users];
+
+    // Filtro por búsqueda de texto
+    if (this.searchTerm.trim()) {
+      const term = this.searchTerm.toLowerCase().trim();
+      filtered = filtered.filter(
+        (user) =>
+          user.nombre.toLowerCase().includes(term) ||
+          user.correo.toLowerCase().includes(term) ||
+          (user.telefono && user.telefono.includes(term))
+      );
     }
 
-    const term = this.searchTerm.toLowerCase().trim();
-    this.filteredUsers = this.users.filter(user =>
-      user.nombre.toLowerCase().includes(term) ||
-      user.correo.toLowerCase().includes(term) ||
-      (user.telefono && user.telefono.includes(term))
+    // Filtro por provider
+    if (this.filters.provider) {
+      filtered = filtered.filter(
+        (user) => user.provider === this.filters.provider
+      );
+    }
+
+    // Filtro por rango de fechas
+    if (this.filters.dateRange) {
+      filtered = this.filterByDateRange(filtered, this.filters.dateRange);
+    }
+
+    // Aplicar ordenamiento
+    filtered = this.sortUsers(filtered);
+
+    this.filteredUsers = filtered;
+  }
+
+  // Filtrar por rango de fechas
+  private filterByDateRange(users: User[], range: string): User[] {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    return users.filter((user) => {
+      if (!user.fechaCreacion) return false;
+
+      const userDate = new Date(user.fechaCreacion);
+      const userDateOnly = new Date(
+        userDate.getFullYear(),
+        userDate.getMonth(),
+        userDate.getDate()
+      );
+
+      switch (range) {
+        case 'today':
+          return userDateOnly.getTime() === today.getTime();
+
+        case 'week':
+          const weekAgo = new Date(today);
+          weekAgo.setDate(weekAgo.getDate() - 7);
+          return userDateOnly >= weekAgo;
+
+        case 'month':
+          const monthAgo = new Date(today);
+          monthAgo.setMonth(monthAgo.getMonth() - 1);
+          return userDateOnly >= monthAgo;
+
+        case 'year':
+          const yearAgo = new Date(today);
+          yearAgo.setFullYear(yearAgo.getFullYear() - 1);
+          return userDateOnly >= yearAgo;
+
+        default:
+          return true;
+      }
+    });
+  }
+
+  // Ordenar usuarios
+  private sortUsers(users: User[]): User[] {
+    return users.sort((a, b) => {
+      let aValue: any;
+      let bValue: any;
+
+      switch (this.sortConfig.field) {
+        case 'nombre':
+          aValue = a.nombre.toLowerCase();
+          bValue = b.nombre.toLowerCase();
+          break;
+        case 'correo':
+          aValue = a.correo.toLowerCase();
+          bValue = b.correo.toLowerCase();
+          break;
+        case 'fechaCreacion':
+          aValue = new Date(a.fechaCreacion || 0).getTime();
+          bValue = new Date(b.fechaCreacion || 0).getTime();
+          break;
+        case 'provider':
+          aValue = (a.provider || '').toLowerCase();
+          bValue = (b.provider || '').toLowerCase();
+          break;
+        default:
+          return 0;
+      }
+
+      if (aValue < bValue) {
+        return this.sortConfig.direction === 'asc' ? -1 : 1;
+      }
+      if (aValue > bValue) {
+        return this.sortConfig.direction === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+  }
+
+  // Cambiar dirección de ordenamiento
+  toggleSortDirection(): void {
+    this.sortConfig.direction =
+      this.sortConfig.direction === 'asc' ? 'desc' : 'asc';
+    this.applyFilters();
+  }
+
+  // Limpiar todos los filtros
+  clearFilters(): void {
+    this.searchTerm = '';
+    this.filters = {
+      provider: '',
+      dateRange: '',
+    };
+    this.sortConfig = {
+      field: 'fechaCreacion',
+      direction: 'desc',
+    };
+    this.applyFilters();
+  }
+
+  // Verificar si hay filtros activos
+  hasActiveFilters(): boolean {
+    return !!(
+      this.filters.provider ||
+      this.filters.dateRange ||
+      this.searchTerm.trim()
     );
   }
 
+  // Obtener etiqueta del rango de fechas
+  getDateRangeLabel(range: string): string {
+    const labels: { [key: string]: string } = {
+      today: 'Hoy',
+      week: 'Esta semana',
+      month: 'Este mes',
+      year: 'Este año',
+    };
+    return labels[range] || range;
+  }
+
   // Abrir modal
-  openModal(mode: 'create' | 'edit' | 'view' | 'delete', user?: User): void {
+  openModal(mode: 'edit' | 'view', user?: User): void {
     this.modalConfig = {
       isOpen: true,
       mode,
       title: this.getModalTitle(mode),
-      user: user ? { ...user } : undefined
+      user: user ? { ...user } : undefined,
     };
 
-    // Configurar formulario según el modo
-    if (mode === 'create') {
-      this.userForm.reset();
-      this.userForm.get('contraseña')?.setValidators([Validators.required, Validators.minLength(6)]);
-      this.userForm.get('contraseña')?.updateValueAndValidity();
-    } else if (mode === 'edit' && user) {
+    // Configurar formulario para edición
+    if (mode === 'edit' && user) {
       this.userForm.patchValue({
         nombre: user.nombre,
-        correo: user.correo,
-        telefono: user.telefono || ''
+        telefono: user.telefono || '',
       });
-      this.userForm.get('contraseña')?.clearValidators();
-      this.userForm.get('contraseña')?.updateValueAndValidity();
     }
   }
 
@@ -126,41 +289,7 @@ export class UserCrudComponent implements OnInit, OnDestroy {
     this.processing = false;
   }
 
-  // Crear usuario
-  async createUser(): Promise<void> {
-    if (this.userForm.invalid) {
-      this.markFormGroupTouched();
-      return;
-    }
-
-    this.processing = true;
-    try {
-      const formData = this.userForm.value;
-      const userData: CreateUserData = {
-        nombre: formData.nombre.trim(),
-        correo: formData.correo.trim(),
-        telefono: formData.telefono?.trim() || '',
-        contraseña: formData.contraseña
-      };
-
-      const result = await this.userService.createUser(userData);
-      
-      if (result.success) {
-        this.showNotification('Usuario creado exitosamente', 'success');
-        this.closeModal();
-        await this.loadUsers();
-      } else {
-        this.showNotification(result.message, 'error');
-      }
-    } catch (error: any) {
-      console.error('Error al crear usuario:', error);
-      this.showNotification('Error inesperado al crear usuario', 'error');
-    } finally {
-      this.processing = false;
-    }
-  }
-
-  // Actualizar usuario
+  // Actualizar usuario (solo campos editables)
   async updateUser(): Promise<void> {
     if (this.userForm.invalid || !this.modalConfig.user) {
       this.markFormGroupTouched();
@@ -172,12 +301,14 @@ export class UserCrudComponent implements OnInit, OnDestroy {
       const formData = this.userForm.value;
       const updateData: Partial<User> = {
         nombre: formData.nombre.trim(),
-        correo: formData.correo.trim(),
-        telefono: formData.telefono?.trim() || ''
+        telefono: formData.telefono?.trim() || '',
       };
 
-      const result = await this.userService.updateUser(this.modalConfig.user!.uid!, updateData);
-      
+      const result = await this.userService.updateUser(
+        this.modalConfig.user!.uid!,
+        updateData
+      );
+
       if (result.success) {
         this.showNotification('Usuario actualizado exitosamente', 'success');
         this.closeModal();
@@ -193,43 +324,18 @@ export class UserCrudComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Eliminar usuario
-  async deleteUser(): Promise<void> {
-    if (!this.modalConfig.user) return;
-
-    this.processing = true;
-    try {
-      const result = await this.userService.deleteUser(this.modalConfig.user.uid!);
-      
-      if (result.success) {
-        this.showNotification('Usuario eliminado exitosamente', 'success');
-        this.closeModal();
-        await this.loadUsers();
-      } else {
-        this.showNotification(result.message, 'error');
-      }
-    } catch (error: any) {
-      console.error('Error al eliminar usuario:', error);
-      this.showNotification('Error inesperado al eliminar usuario', 'error');
-    } finally {
-      this.processing = false;
-    }
-  }
-
   // Obtener título del modal
   private getModalTitle(mode: string): string {
     const titles = {
-      create: 'Crear Nuevo Usuario',
       edit: 'Editar Usuario',
       view: 'Detalles del Usuario',
-      delete: 'Confirmar Eliminación'
     };
     return titles[mode as keyof typeof titles] || '';
   }
 
   // Marcar campos del formulario como touched
   private markFormGroupTouched(): void {
-    Object.keys(this.userForm.controls).forEach(key => {
+    Object.keys(this.userForm.controls).forEach((key) => {
       const control = this.userForm.get(key);
       control?.markAsTouched();
     });
@@ -240,7 +346,7 @@ export class UserCrudComponent implements OnInit, OnDestroy {
     this.notification = {
       show: true,
       type,
-      message
+      message,
     };
 
     // Auto-hide después de 5 segundos
@@ -253,7 +359,7 @@ export class UserCrudComponent implements OnInit, OnDestroy {
   getInitials(name: string): string {
     return name
       .split(' ')
-      .map(word => word.charAt(0))
+      .map((word) => word.charAt(0))
       .join('')
       .substring(0, 2)
       .toUpperCase();
@@ -262,7 +368,7 @@ export class UserCrudComponent implements OnInit, OnDestroy {
   // Formatear fecha
   formatDate(date: Date | any): string {
     if (!date) return 'N/A';
-    
+
     try {
       const dateObj = date instanceof Date ? date : new Date(date);
       return dateObj.toLocaleDateString('es-ES', {
@@ -270,19 +376,24 @@ export class UserCrudComponent implements OnInit, OnDestroy {
         month: 'short',
         day: 'numeric',
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
       });
     } catch (error) {
       return 'Fecha inválida';
     }
   }
 
+  // Obtener usuarios activos (puedes personalizar esta lógica)
+  getActiveUsers(): number {
+    return this.users.length; // Asumiendo que todos están activos
+  }
+
   // Obtener usuarios creados hoy
   getTodayUsers(): number {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
-    return this.users.filter(user => {
+
+    return this.users.filter((user) => {
       if (!user.fechaCreacion) return false;
       const userDate = new Date(user.fechaCreacion);
       userDate.setHours(0, 0, 0, 0);

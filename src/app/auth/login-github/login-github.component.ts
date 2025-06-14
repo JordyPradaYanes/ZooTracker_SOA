@@ -12,7 +12,12 @@ export class LoginGithubComponent {
   @Output() loginSuccess = new EventEmitter<void>();
   @Output() loginError = new EventEmitter<string>();
   
-  isLoading = false;
+  email: string = '';
+  password: string = '';
+  rememberMe: boolean = false;
+  showPassword: boolean = false;
+  errorMessage: string = '';
+  isLoading: boolean = false;
 
   constructor(private authService: AuthService) {}
 

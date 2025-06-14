@@ -5,8 +5,8 @@ import { CommonModule } from '@angular/common';
 import { LoginGoogleComponent } from '../login-google/login-google.component';
 import { LoginFacebookComponent } from '../login-facebook/login-facebook.component';
 import { AuthService } from '../../services/auth.service';
-import { UserService } from '../../services/user.service'; // Importar UserService
-import { CreateUserData } from '../../interface/user.interface'; // Importar interface
+import { UserService } from '../../services/user.service';
+import { CreateUserData } from '../../interface/user.interface';
 
 @Component({
   selector: 'app-registro',
@@ -18,7 +18,8 @@ import { CreateUserData } from '../../interface/user.interface'; // Importar int
 export class RegistroComponent implements OnInit {
   name: string = '';
   email: string = '';
-  telefono: string = ''; // Cambiado para ser consistente con la interface
+  telefono: string = '';
+  provider: string = 'email'; // Por defecto, registro por email
   password: string = '';
   confirmPassword: string = '';
   showPassword: boolean = false;
@@ -28,7 +29,7 @@ export class RegistroComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private userService: UserService, // Inyectar UserService
+    private userService: UserService,
     private router: Router
   ) {}
 
@@ -45,7 +46,7 @@ export class RegistroComponent implements OnInit {
     this.showPassword = !this.showPassword;
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     // Validaciones básicas del formulario
     if (!this.name || !this.email || !this.password || !this.confirmPassword) {
       this.errorMessage = 'Por favor, complete todos los campos obligatorios';
@@ -73,9 +74,24 @@ export class RegistroComponent implements OnInit {
       this.errorMessage = 'El formato del correo electrónico es inválido';
       return;
     }
-    
+
+    // Verificar si el correo ya está registrado
     this.isLoading = true;
     this.errorMessage = '';
+
+    try {
+      const emailExists = await this.authService.checkIfEmailExists(this.email);
+      if (emailExists) {
+        this.errorMessage = 'Este correo electrónico ya está registrado. Intenta iniciar sesión o usa otro correo.';
+        this.isLoading = false;
+        return;
+      }
+    } catch (error) {
+      console.error('Error al verificar correo:', error);
+      this.errorMessage = 'Error al verificar el correo. Intente nuevamente.';
+      this.isLoading = false;
+      return;
+    }
     
     this.registerUser();
   }
@@ -88,7 +104,8 @@ export class RegistroComponent implements OnInit {
         nombre: this.name.trim(),
         correo: this.email.trim().toLowerCase(),
         telefono: this.telefono.trim() || '', // Campo opcional
-        contraseña: this.password
+        contraseña: this.password,
+        provider: 'email' // Establecer el proveedor como 'email' para registro manual
       };
 
       console.log('Registrando usuario con datos:', { ...userData, contraseña: '[OCULTA]' });
@@ -108,8 +125,8 @@ export class RegistroComponent implements OnInit {
           // No interrumpir el flujo por este error
         }
 
-        // Navegar a la página de registros
-        this.router.navigate(['/registros']);
+        // Navegar a la página de login
+        this.router.navigate(['/login']);
       } else {
         this.errorMessage = result.message;
         console.error('Error en registro:', result.message);
@@ -129,13 +146,14 @@ export class RegistroComponent implements OnInit {
       const result = await this.authService.register(this.email, this.password, this.name);
       console.log('Registro exitoso con AuthService:', result);
       
-      // Opcional: Crear perfil en Firestore después del registro
+      // Crear perfil en Firestore después del registro
       if (result.user) {
         try {
           const profileResult = await this.userService.createUserProfile(result.user.uid, {
             nombre: this.name.trim(),
             correo: this.email.trim().toLowerCase(),
-            telefono: this.telefono.trim() || ''
+            telefono: this.telefono.trim() || '',
+            provider: 'email', // Asegurarse de establecer el proveedor
           });
           
           if (profileResult.success) {
@@ -148,7 +166,7 @@ export class RegistroComponent implements OnInit {
         }
       }
 
-      this.router.navigate(['/registros']);
+      this.router.navigate(['/login']);
       
     } catch (error: any) {
       console.error('Error en registro:', error);

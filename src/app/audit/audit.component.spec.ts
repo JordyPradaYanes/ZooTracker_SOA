@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { UserCrudComponent } from './user-crud.component';
+import { AuditComponent } from './audit.component';
 
-describe('UserCrudComponent', () => {
-  let component: UserCrudComponent;
-  let fixture: ComponentFixture<UserCrudComponent>;
+describe('AuditComponent', () => {
+  let component: AuditComponent;
+  let fixture: ComponentFixture<AuditComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UserCrudComponent]
+      imports: [AuditComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(UserCrudComponent);
+    fixture = TestBed.createComponent(AuditComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -20,3 +20,4 @@ describe('UserCrudComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+});
