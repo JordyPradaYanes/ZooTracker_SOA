@@ -13,9 +13,11 @@ import {
   onAuthStateChanged,
   User as FirebaseUser,
   sendEmailVerification,
-  updateProfile
+  updateProfile,
+  fetchSignInMethodsForEmail
 } from '@angular/fire/auth';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { Firestore, doc, setDoc, getDoc, updateDoc } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +26,10 @@ export class AuthService {
   private userLoggedIn = new BehaviorSubject<boolean>(false);
   private currentUser = new BehaviorSubject<FirebaseUser | null>(null);
   
-  constructor(private auth: Auth) {
+  constructor(
+    private auth: Auth,
+    private firestore: Firestore
+  ) {
     // Verificar si el usuario ya está autenticado al iniciar el servicio
     onAuthStateChanged(this.auth, user => {
       console.log('Estado de autenticación cambió:', user ? 'Usuario autenticado' : 'No autenticado');
@@ -42,13 +47,69 @@ export class AuthService {
   get user$(): Observable<FirebaseUser | null> {
     return this.currentUser.asObservable();
   }
+
+  // Verificar si un correo ya está registrado
+  async checkIfEmailExists(email: string): Promise<boolean> {
+    try {
+      const signInMethods = await fetchSignInMethodsForEmail(this.auth, email);
+      return signInMethods.length > 0;
+    } catch (error) {
+      console.error('Error al verificar correo:', error);
+      throw error;
+    }
+  }
+
+  // Guardar información del proveedor en Firestore
+  private async saveProviderInfo(user: FirebaseUser, provider: string, additionalData?: any): Promise<void> {
+    try {
+      const userDocRef = doc(this.firestore, 'users', user.uid);
+      const userDoc = await getDoc(userDocRef);
+      
+      const providerData = {
+        provider: provider,
+        providerId: user.providerData[0]?.providerId || provider,
+        lastLoginAt: new Date(),
+        ...additionalData
+      };
+
+      if (userDoc.exists()) {
+        // Actualizar documento existente
+        await updateDoc(userDocRef, {
+          ...providerData,
+          updatedAt: new Date()
+        });
+      } else {
+        // Crear nuevo documento
+        await setDoc(userDocRef, {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+          emailVerified: user.emailVerified,
+          createdAt: new Date(),
+          ...providerData
+        }, { merge: true });
+      }
+
+      console.log(`Información del proveedor ${provider} guardada exitosamente`);
+    } catch (error) {
+      console.error('Error al guardar información del proveedor:', error);
+      // No lanzar error para no interrumpir el flujo de autenticación
+    }
+  }
   
-  // Iniciar sesión con correo y contraseña
+ // Iniciar sesión con correo y contraseña
   async loginWithEmailAndPassword(email: string, password: string): Promise<UserCredential> {
     try {
       console.log('Intentando iniciar sesión con:', email);
       const result = await signInWithEmailAndPassword(this.auth, email, password);
       console.log('Resultado de autenticación:', result);
+      
+      // Guardar información del proveedor
+      await this.saveProviderInfo(result.user, 'email', {
+        loginMethod: 'email-password'
+      });
+      
       this.userLoggedIn.next(true);
       this.currentUser.next(result.user);
       return result;
@@ -67,6 +128,12 @@ export class AuthService {
       provider.addScope('email');
       
       const result = await signInWithPopup(this.auth, provider);
+      
+      // Guardar información del proveedor Google
+      await this.saveProviderInfo(result.user, 'google', {
+        loginMethod: 'google-popup'
+      });
+      
       this.userLoggedIn.next(true);
       this.currentUser.next(result.user);
       return result;
@@ -84,6 +151,12 @@ export class AuthService {
       provider.addScope('email');
       
       const result = await signInWithPopup(this.auth, provider);
+      
+      // Guardar información del proveedor Facebook
+      await this.saveProviderInfo(result.user, 'facebook', {
+        loginMethod: 'facebook-popup'
+      });
+      
       this.userLoggedIn.next(true);
       this.currentUser.next(result.user);
       return result;
@@ -101,6 +174,12 @@ export class AuthService {
       provider.addScope('user:email');
       
       const result = await signInWithPopup(this.auth, provider);
+      
+      // Guardar información del proveedor GitHub
+      await this.saveProviderInfo(result.user, 'github', {
+        loginMethod: 'github-popup'
+      });
+      
       this.userLoggedIn.next(true);
       this.currentUser.next(result.user);
       return result;
@@ -119,6 +198,12 @@ export class AuthService {
       if (displayName && result.user) {
         await updateProfile(result.user, { displayName });
       }
+      
+      // Guardar información del proveedor para registro con email
+      await this.saveProviderInfo(result.user, 'email', {
+        loginMethod: 'email-registration',
+        registeredAt: new Date()
+      });
       
       this.userLoggedIn.next(true);
       this.currentUser.next(result.user);
@@ -196,6 +281,30 @@ export class AuthService {
       };
     }
     return null;
+  }
+
+  // Obtener información del proveedor del usuario actual
+  async getCurrentUserProvider(): Promise<{provider: string, providerId: string, loginMethod: string} | null> {
+    try {
+      const user = this.getCurrentUser();
+      if (!user) return null;
+
+      const userDocRef = doc(this.firestore, 'users', user.uid);
+      const userDoc = await getDoc(userDocRef);
+      
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        return {
+          provider: userData['provider'] || 'unknown',
+          providerId: userData['providerId'] || 'unknown',
+          loginMethod: userData['loginMethod'] || 'unknown'
+        };
+      }
+      return null;
+    } catch (error) {
+      console.error('Error al obtener información del proveedor:', error);
+      return null;
+    }
   }
 
   // Manejar errores de Firebase Auth
