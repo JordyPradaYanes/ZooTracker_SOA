@@ -82,6 +82,14 @@
               Inventario
             </a>
           </li>
+
+          <!-- Inventario -->
+          <li class="nav-item" *ngIf="isLoggedIn$ | async">
+            <a routerLink="/userCrud" routerLinkActive="active" class="text-lg hover:text-red-200">
+              <i class="fas fa-box-open text-xl"></i> <!-- Ícono de inventario -->
+              User Crud
+            </a>
+          </li>
   
           <!-- Login y Cerrar Sesion-->
           <li class="nav-item">
