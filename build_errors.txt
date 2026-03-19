@@ -1,0 +1,388 @@
+﻿[33mÔØ»[39m Building...
+[32mÔ£ö[39m Building...
+Application bundle generation failed. [5.167 seconds]
+
+node.exe : 
+[1m[31m[31mX [41;31
+m[[41;97mERROR[41;31m
+][0m [1mNG9: 
+Property 
+'totalAnimales' does 
+not exist on type 'Inve
+ntarioComponent'.[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+En C:\Program 
+Files\nodejs\npx.ps1: 
+29 Carácter: 3
++   & $NODE_EXE 
+$NPX_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: ([1m[31m[31   
+ mX...r-compiler][    
+0m:String) [], Rem    
+oteException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+
+    src/app/LayoutPriv/
+inventario/inventario.c
+omponent.html:87:55:
+[37m      87 Ôöé ...p 
+class="text-3xl 
+font-bold 
+text-blue-600">{{ [32m
+totalAnimales[37m 
+}}</p>
+         ÔòÁ           
+                       
+                
+[32m~~~~~~~~~~~~~[0m
+
+  Error occurs in the 
+template of component 
+InventarioComponent.
+
+    src/app/LayoutPriv/
+inventario/inventario.c
+omponent.ts:15:15:
+[37m      15 Ôöé   
+templateUrl: [32m'./in
+ventario.component.html
+'[37m,
+         ÔòÁ           
+     [32m~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97
+mERROR[41;31m][0m 
+[1mNG9: Property 
+'animalesSanos' does 
+not exist on type 'Inve
+ntarioComponent'.[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/LayoutPriv/
+inventario/inventario.c
+omponent.html:91:56:
+[37m      91 Ôöé ... 
+class="text-3xl 
+font-bold 
+text-green-600">{{ [32
+manimalesSanos[37m 
+}}</p>
+         ÔòÁ           
+                       
+                
+[32m~~~~~~~~~~~~~[0m
+
+  Error occurs in the 
+template of component 
+InventarioComponent.
+
+    src/app/LayoutPriv/
+inventario/inventario.c
+omponent.ts:15:15:
+[37m      15 Ôöé   
+templateUrl: [32m'./in
+ventario.component.html
+'[37m,
+         ÔòÁ           
+     [32m~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97
+mERROR[41;31m][0m 
+[1mNG9: Property 'anim
+alesEnTratamiento' 
+does not exist on type 
+'InventarioComponent'.
+[0m [1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/LayoutPriv/
+inventario/inventario.c
+omponent.html:95:57:
+[37m      95 Ôöé 
+...ext-3xl font-bold 
+text-yellow-600">{{ [3
+2manimalesEnTratamiento
+[37m }}</p>
+         ÔòÁ           
+                       
+        [32m~~~~~~~~~~
+~~~~~~~~~~~[0m
+
+  Error occurs in the 
+template of component 
+InventarioComponent.
+
+    src/app/LayoutPriv/
+inventario/inventario.c
+omponent.ts:15:15:
+[37m      15 Ôöé   
+templateUrl: [32m'./in
+ventario.component.html
+'[37m,
+         ÔòÁ           
+     [32m~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97
+mERROR[41;31m][0m 
+[1mNG9: Property 
+'nacimientosMes' does 
+not exist on type 'Inve
+ntarioComponent'.[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/LayoutPriv/
+inventario/inventario.c
+omponent.html:99:57:
+[37m      99 Ôöé 
+...lass="text-3xl 
+font-bold 
+text-purple-600">{{ [3
+2mnacimientosMes[37m 
+}}</p>
+         ÔòÁ           
+                       
+               
+[32m~~~~~~~~~~~~~~[0m
+
+  Error occurs in the 
+template of component 
+InventarioComponent.
+
+    src/app/LayoutPriv/
+inventario/inventario.c
+omponent.ts:15:15:
+[37m      15 Ôöé   
+templateUrl: [32m'./in
+ventario.component.html
+'[37m,
+         ÔòÁ           
+     [32m~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97
+mERROR[41;31m][0m 
+[1mNG9: Property 
+'animales' does not 
+exist on type 'Inventar
+ioComponent'.[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/LayoutPriv/
+inventario/inventario.c
+omponent.html:205:37:
+[37m      205 Ôöé ... 
+ <span 
+class="font-medium">{{ 
+[32manimales[37m.leng
+th }}</span> animales
+          ÔòÁ          
+                       
+  [32m~~~~~~~~[0m
+
+  Error occurs in the 
+template of component 
+InventarioComponent.
+
+    src/app/LayoutPriv/
+inventario/inventario.c
+omponent.ts:15:15:
+[37m      15 Ôöé   
+templateUrl: [32m'./in
+ventario.component.html
+'[37m,
+         ÔòÁ           
+     [32m~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97
+mERROR[41;31m][0m 
+[1mTS2322: Type 
+'Chart<"doughnut", 
+number[], string>' is 
+not assignable to type 
+'Chart<keyof 
+ChartTypeRegistry, 
+(number | 
+ScatterDataPoint | 
+BubbleDataPoint | 
+null)[], unknown>'.
+  Types of property 
+'config' are 
+incompatible.
+    Type 'ChartConfigur
+ation<"doughnut", 
+number[], string> | Cha
+rtConfigurationCustomTy
+pesPerDataset<"doughnut
+", number[], string>' 
+is not assignable to 
+type 'ChartConfiguratio
+n<keyof 
+ChartTypeRegistry, 
+(number | 
+ScatterDataPoint | 
+BubbleDataPoint | 
+null)[], unknown> | Cha
+rtConfigurationCustomTy
+pesPerDataset<...>'.
+      Type 'ChartConfig
+uration<"doughnut", 
+number[], string>' is 
+not assignable to type 
+'ChartConfiguration<key
+of ChartTypeRegistry, 
+(number | 
+ScatterDataPoint | 
+BubbleDataPoint | 
+null)[], unknown> | Cha
+rtConfigurationCustomTy
+pesPerDataset<...>'.
+        Type 'ChartConf
+iguration<"doughnut", 
+number[], string>' is 
+not assignable to type 
+'ChartConfiguration<key
+of ChartTypeRegistry, 
+(number | 
+ScatterDataPoint | 
+BubbleDataPoint | 
+null)[], unknown>'.
+          Types of 
+property 'options' are 
+incompatible.
+            Type '_Deep
+PartialObject<CoreChart
+Options<"doughnut"> & E
+lementChartOptions<"dou
+ghnut"> & PluginChartOp
+tions<"doughnut"> & Dat
+asetChartOptions<"dough
+nut"> & 
+ScaleChartOptions<...> 
+& DoughnutControllerCha
+rtOptions> | 
+undefined' is not 
+assignable to type '_De
+epPartialObject<CoreCha
+rtOptions<keyof 
+ChartTypeRegistry> & El
+ementChartOptions<keyof
+ ChartTypeRegistry> & P
+luginChartOptions<...> 
+& DatasetChartOptions<.
+..> & ScaleChartOptions
+<...>> | undefined'.
+              Type '_De
+epPartialObject<CoreCha
+rtOptions<"doughnut"> 
+& ElementChartOptions<"
+doughnut"> & PluginChar
+tOptions<"doughnut"> & 
+DatasetChartOptions<"do
+ughnut"> & 
+ScaleChartOptions<...> 
+& DoughnutControllerCha
+rtOptions>' is not 
+assignable to type '_De
+epPartialObject<CoreCha
+rtOptions<keyof 
+ChartTypeRegistry> & El
+ementChartOptions<keyof
+ ChartTypeRegistry> & P
+luginChartOptions<...> 
+& DatasetChartOptions<.
+..> & ScaleChartOptions
+<...>>'.
+                Types 
+of property 
+'animation' are 
+incompatible.
+                  Type 
+'false | _DeepPartialOb
+ject<false & DoughnutAn
+imationOptions> | _Deep
+PartialObject<Animation
+Spec<"doughnut"> & { 
+onProgress?: ((this: 
+Chart<...>, event: 
+AnimationEvent) => 
+void) | undefined; 
+onComplete?: ((this: 
+Chart<...>, event: 
+AnimationEvent) => 
+void) | undefined; } & 
+false> | _DeepPartialOb
+ject<...> | undefined' 
+is not assignable to 
+type 'false | _DeepPart
+ialObject<AnimationSpec
+<keyof 
+ChartTypeRegistry> & { 
+onProgress?: ((this: 
+Chart<keyof 
+ChartTypeRegistry, 
+(number | ... 2 more 
+... | null)[], 
+unknown>, event: 
+AnimationEvent) => 
+void) | undefined; 
+onComplete?: ((this: 
+Chart<...>, event: 
+AnimationEvent) => 
+void) | undefined; }> 
+| undefined'.
+                    
+Type '_DeepPartialObjec
+t<false & DoughnutAnima
+tionOptions>' is not 
+assignable to type 
+'false | _DeepPartialOb
+ject<AnimationSpec<keyo
+f ChartTypeRegistry> & 
+{ onProgress?: ((this: 
+Chart<keyof 
+ChartTypeRegistry, 
+(number | ... 2 more 
+... | null)[], 
+unknown>, event: 
+AnimationEvent) => 
+void) | undefined; 
+onComplete?: ((this: 
+Chart<...>, event: 
+AnimationEvent) => 
+void) | undefined; }> 
+| undefined'.[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/LayoutPriv/
+reportes/reportes.compo
+nent.ts:107:4:
+[37m      107 Ôöé     
+[32mthis.charts['chart
+Inventario'][37m = 
+new Chart(ctx, {
+          ÔòÁ     [32m
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~[0m
+
+[39m[22m

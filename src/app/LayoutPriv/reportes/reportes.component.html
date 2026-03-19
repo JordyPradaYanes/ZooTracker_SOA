@@ -81,12 +81,16 @@
             <div class="flex space-x-2">
               <button (click)="exportarPDF()" class="bg-red-600 hover:bg-red-700 text-white font-medium py-1 px-3 rounded-md text-sm transition-colors flex items-center">
                 <span class="mr-1">PDF</span>
-                <i class="fas fa-file-pdf"></i>
-              </button>
+                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9 2a2 2 0 00-2 2v8a2 2 0 002 2h6a2 2 0 002-2V6.414A2 2 0 0016.414 5L14 2.586A2 2 0 0012.586 2H9z" />
+                </svg>
+             </button>
               <button (click)="exportarExcel()" class="bg-green-600 hover:bg-green-700 text-white font-medium py-1 px-3 rounded-md text-sm transition-colors flex items-center">
                 <span class="mr-1">Excel</span>
-                <i class="fas fa-file-excel"></i>
-              </button>
+                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2zM3 16a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2z" />
+                </svg>
+             </button>
             </div>
           </div>
   
@@ -100,18 +104,18 @@
                   <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                       <tr>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo de Animal</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cantidad</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Edad Promedio</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Peso Promedio</th>
+                        <th scope="col" class="px-3 py-3 md:px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+                        <th scope="col" class="px-3 py-3 md:px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cant.</th>
+                        <th scope="col" class="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Edad Prom.</th>
+                        <th scope="col" class="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Peso Prom.</th>
                       </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                       <tr *ngFor="let item of datosInventario">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ item.tipo }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.cantidad }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.edadPromedio }} meses</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.pesoPromedio }} kg</td>
+                        <td class="px-3 py-4 md:px-6 whitespace-nowrap text-sm font-medium text-gray-900">{{ item.tipo }}</td>
+                        <td class="px-3 py-4 md:px-6 whitespace-nowrap text-sm text-gray-500">{{ item.cantidad }}</td>
+                        <td class="hidden sm:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.edadPromedio }} meses</td>
+                        <td class="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.pesoPromedio }} kg</td>
                       </tr>
                     </tbody>
                   </table>
@@ -121,9 +125,9 @@
               <div class="bg-white p-4 rounded-lg shadow-sm">
                 <h4 class="font-medium text-gray-800 mb-3">Distribución por Tipo</h4>
                 <div class="flex justify-center">
-                  <span class="w-1/2">
+                  <div class="w-full md:w-1/2">
                     <canvas id="chartInventario"></canvas>
-                  </span>                  
+                  </div>                  
                 </div>
               </div>
             </div>
@@ -136,24 +140,24 @@
                   <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                       <tr>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Animal</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cantidad</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Responsable</th>
+                        <th scope="col" class="px-3 py-3 md:px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
+                        <th scope="col" class="px-3 py-3 md:px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+                        <th scope="col" class="px-3 py-3 md:px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Animal</th>
+                        <th scope="col" class="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cant.</th>
+                        <th scope="col" class="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Resp.</th>
                       </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                       <tr *ngFor="let item of datosMovimientos">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.fecha }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          <span [ngClass]="item.tipo === 'Entrada' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'" class="px-2 py-1 rounded-full text-xs">
+                        <td class="px-3 py-4 md:px-6 whitespace-nowrap text-sm text-gray-500">{{ item.fecha }}</td>
+                        <td class="px-3 py-4 md:px-6 whitespace-nowrap text-sm text-gray-500">
+                          <span [ngClass]="item.tipo === 'Entrada' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'" class="px-2 py-1 rounded-full text-[10px] md:text-xs">
                             {{ item.tipo }}
                           </span>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ item.animal }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.cantidad }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.responsable }}</td>
+                        <td class="px-3 py-4 md:px-6 whitespace-nowrap text-sm text-gray-900">{{ item.animal }}</td>
+                        <td class="hidden sm:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.cantidad }}</td>
+                        <td class="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.responsable }}</td>
                       </tr>
                     </tbody>
                   </table>
@@ -162,7 +166,9 @@
               
               <div class="bg-white p-4 rounded-lg shadow-sm">
                 <h4 class="font-medium text-gray-800 mb-3">Tendencia de Movimientos</h4>
-                <canvas id="chartMovimientos" width="400" height="200"></canvas>
+                <div class="h-[200px] md:h-[300px]">
+                    <canvas id="chartMovimientos"></canvas>
+                </div>
               </div>
             </div>
   
@@ -174,18 +180,18 @@
                   <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                       <tr>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo de Animal</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Saludables</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">En Tratamiento</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vacunados</th>
+                        <th scope="col" class="px-3 py-3 md:px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+                        <th scope="col" class="px-3 py-3 md:px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sanos</th>
+                        <th scope="col" class="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">En Trat.</th>
+                        <th scope="col" class="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vac.</th>
                       </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                       <tr *ngFor="let item of datosSalud">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ item.tipo }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.saludables }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.enTratamiento }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.vacunados }}</td>
+                        <td class="px-3 py-4 md:px-6 whitespace-nowrap text-sm font-medium text-gray-900">{{ item.tipo }}</td>
+                        <td class="px-3 py-4 md:px-6 whitespace-nowrap text-sm text-gray-500">{{ item.saludables }}</td>
+                        <td class="hidden sm:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.enTratamiento }}</td>
+                        <td class="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.vacunados }}</td>
                       </tr>
                     </tbody>
                   </table>

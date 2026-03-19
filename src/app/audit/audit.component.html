@@ -4,17 +4,17 @@
   <div class="container mx-auto px-4 py-8">
     <!-- Header con animación -->
     <div class="mb-8 animate-fade-in">
-      <div class="flex items-center justify-between mb-4">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
-          <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+          <h1 class="text-2xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
             🔍 Auditoría del Sistema
           </h1>
-          <p class="text-gray-600 text-lg">Registro de actividades y accesos de usuarios</p>
+          <p class="text-gray-600 text-base md:text-lg">Registro de actividades y accesos de usuarios</p>
         </div>
-        <div class="hidden md:flex items-center space-x-4">
+        <div class="flex items-center space-x-4">
           <div class="bg-white/70 backdrop-blur-sm rounded-full px-4 py-2 shadow-md">
-            <span class="text-sm text-gray-600">Última actualización:</span>
-            <span class="text-sm font-semibold text-blue-600 ml-1">{{ getCurrentTime() }}</span>
+            <span class="text-xs md:text-sm text-gray-600">Última actualización:</span>
+            <span class="text-xs md:text-sm font-semibold text-blue-600 ml-1">{{ getCurrentTime() }}</span>
           </div>
         </div>
       </div>
@@ -324,15 +324,16 @@
           <thead class="bg-gray-50/50">
             <tr>
               <!-- MODIFICADO: Header clickeable para Fecha y Hora -->
-              <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+              <th class="px-3 py-4 md:px-6 text-left text-[10px] md:text-xs font-bold text-gray-600 uppercase tracking-wider">
                 <button 
                   (click)="sortData('fechaHora')"
                   class="flex items-center space-x-1 hover:text-blue-600 transition-colors duration-200 group"
                 >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                   </svg>
-                  <span>Fecha y Hora</span>
+                  <span class="hidden md:inline">Fecha y Hora</span>
+                  <span class="md:hidden">Fecha</span>
                   <div class="flex flex-col">
                     <svg *ngIf="isSorted('fechaHora') && sortConfig.direction === 'asc'" class="w-3 h-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
@@ -340,7 +341,7 @@
                     <svg *ngIf="isSorted('fechaHora') && sortConfig.direction === 'desc'" class="w-3 h-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
-                    <svg *ngIf="!isSorted('fechaHora')" class="w-3 h-3 text-gray-400 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg *ngIf="!isSorted('fechaHora')" class="w-2 h-2 text-gray-400 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
                     </svg>
                   </div>
@@ -348,12 +349,12 @@
               </th>
               
               <!-- MODIFICADO: Header clickeable para Usuario -->
-              <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+              <th class="px-3 py-4 md:px-6 text-left text-[10px] md:text-xs font-bold text-gray-600 uppercase tracking-wider">
                 <button 
                   (click)="sortData('nombre')"
                   class="flex items-center space-x-1 hover:text-blue-600 transition-colors duration-200 group"
                 >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                   </svg>
                   <span>Usuario</span>
@@ -364,22 +365,23 @@
                     <svg *ngIf="isSorted('nombre') && sortConfig.direction === 'desc'" class="w-3 h-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
-                    <svg *ngIf="!isSorted('nombre')" class="w-3 h-3 text-gray-400 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg *ngIf="!isSorted('nombre')" class="w-2 h-2 text-gray-400 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
                     </svg>
                   </div>
                 </button>
               </th>
               
-              <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+              <th class="px-3 py-4 md:px-6 text-left text-[10px] md:text-xs font-bold text-gray-600 uppercase tracking-wider">
                 <div class="flex items-center space-x-1">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                   </svg>
-                  <span>Acción</span>
+                  <span class="hidden md:inline">Acción</span>
+                  <span class="md:hidden">Acc.</span>
                 </div>
               </th>
-              <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+              <th class="hidden sm:table-cell px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
                 <div class="flex items-center space-x-1">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -387,7 +389,7 @@
                   <span>Detalles</span>
                 </div>
               </th>
-              <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+              <th class="hidden lg:table-cell px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
                 <div class="flex items-center space-x-1">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9-9a9 9 0 00-9 9m9-9v18"></path>
@@ -401,37 +403,37 @@
             <tr *ngFor="let log of paginatedLogs; trackBy: trackByLogId; let i = index" 
                 class="hover:bg-blue-50/50 transition-all duration-200 animate-fade-in-up"
                 [style.animation-delay.ms]="i * 50">
-              <td class="px-6 py-4 whitespace-nowrap">
+              <td class="px-3 py-4 md:px-6 whitespace-nowrap">
                 <div class="flex items-center">
-                  <div class="flex-shrink-0 w-2 h-2 bg-blue-400 rounded-full mr-3 animate-pulse"></div>
-                  <div class="text-sm font-medium text-gray-900">{{ formatDate(log.fechaHora) }}</div>
+                  <div class="flex-shrink-0 w-1.5 h-1.5 md:w-2 md:h-2 bg-blue-400 rounded-full mr-2 md:mr-3 animate-pulse"></div>
+                  <div class="text-[10px] md:text-sm font-medium text-gray-900">{{ formatDate(log.fechaHora) }}</div>
                 </div>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap">
+              <td class="px-3 py-4 md:px-6 whitespace-nowrap">
                 <div class="flex items-center">
-                  <div class="flex-shrink-0 h-10 w-10">
-                    <div class="h-10 w-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-semibold text-sm">
+                  <div class="flex-shrink-0 h-8 w-8 md:h-10 md:w-10">
+                    <div class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-semibold text-[10px] md:text-sm">
                       {{ getInitials(log.nombre) }}
                     </div>
                   </div>
-                  <div class="ml-3">
-                    <div class="text-sm font-medium text-gray-900">{{ log.nombre }}</div>
-                    <div class="text-sm text-gray-500 font-mono">{{ log.uid }}</div>
+                  <div class="ml-2 md:ml-3">
+                    <div class="text-[10px] md:text-sm font-medium text-gray-900 truncate max-w-[80px] md:max-w-none">{{ log.nombre }}</div>
+                    <div class="hidden md:block text-sm text-gray-500 font-mono">{{ log.uid }}</div>
                   </div>
                 </div>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span class="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full {{ getActionClass(log.accion) }} shadow-sm">
+              <td class="px-3 py-4 md:px-6 whitespace-nowrap">
+                <span class="inline-flex items-center px-1 py-0.5 md:px-3 md:py-1 text-[8px] md:text-xs font-semibold rounded-full {{ getActionClass(log.accion) }} shadow-sm">
                   <span class="mr-1">{{ getActionEmoji(log.accion) }}</span>
-                  {{ translateAction(log.accion) }}
+                  <span class="hidden md:inline">{{ translateAction(log.accion) }}</span>
                 </span>
               </td>
-              <td class="px-6 py-4 text-sm text-gray-900">
+              <td class="hidden sm:table-cell px-6 py-4 text-sm text-gray-900">
                 <div class="max-w-xs truncate" [title]="log.detalles || 'Sin detalles'">
                   {{ log.detalles || 'Sin detalles disponibles' }}
                 </div>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <td class="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 <div class="flex items-center">
                   <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9-9a9 9 0 00-9 9m9-9v18"></path>

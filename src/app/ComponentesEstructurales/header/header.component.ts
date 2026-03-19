@@ -15,11 +15,16 @@ import { Observable } from 'rxjs';
 export class HeaderComponent {
   private auth = inject(Auth);
   isLoggedIn$: Observable<boolean>;
+  isMenuOpen = false;
 
   constructor() {
     this.isLoggedIn$ = authState(this.auth).pipe(
       map(user => !!user)
     );
+  }
+
+  toggleMenu() {
+    this.isMenuOpen = !this.isMenuOpen;
   }
 
   logout() {
